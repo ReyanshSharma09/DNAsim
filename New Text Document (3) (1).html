@@ -1,0 +1,2017 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DNA Storage Simulator v3.2</title>
+<style>
+:root{--a:#00D9FF;--t:#FF6B9D;--c:#C9F0FF;--g:#FFC947;--bg:#0A0E27;--card:#141B3D;--text:#E8EDF5;--bdr:#2A3F5F;--ok:#00FFA3;--err:#FF4757;--warn:#FFC947}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'SF Mono','Consolas','Courier New',monospace;background:linear-gradient(135deg,var(--bg),#1a1f3a,#0d1025);color:var(--text);min-height:100vh;padding:16px}
+.ctr{max-width:1440px;margin:0 auto}
+header{text-align:center;padding:28px 20px;background:var(--card);border-radius:12px;border:1px solid var(--bdr);margin-bottom:20px;position:relative;overflow:hidden}
+header::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--a),var(--t),var(--g),var(--c))}
+h1{font-size:2em;background:linear-gradient(90deg,var(--a),var(--t),var(--g));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px;letter-spacing:2px}
+.sub{color:#8B94B0;font-size:.78em;letter-spacing:2px}
+.disc{background:rgba(255,201,71,.07);border:1px solid rgba(255,201,71,.2);border-radius:7px;padding:10px 14px;margin-top:10px;font-size:.7em;color:var(--warn);text-align:left;line-height:1.5}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+@media(max-width:960px){.grid{grid-template-columns:1fr}h1{font-size:1.5em}.vw{flex-direction:column!important}.vc{width:100%!important}}
+.card{background:var(--card);border:1px solid var(--bdr);border-radius:10px;padding:18px}
+.ct{font-size:1em;color:var(--a);margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:7px}
+.uz{border:2px dashed var(--bdr);border-radius:8px;padding:30px 14px;text-align:center;cursor:pointer;transition:all .3s;background:rgba(0,217,255,.02)}
+.uz:hover,.uz.dg{border-color:var(--a);background:rgba(0,217,255,.06)}
+.ui{font-size:2.5em;margin-bottom:8px;opacity:.55}
+.uh{font-size:.7em;color:#8B94B0;margin-top:4px}
+input[type="file"]{display:none}
+.ig{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px}
+.ii{background:rgba(0,217,255,.03);border:1px solid var(--bdr);border-radius:5px;padding:7px 8px}
+.il{font-size:.58em;color:#8B94B0;text-transform:uppercase;letter-spacing:1px;margin-bottom:1px}
+.iv{font-size:.78em;word-break:break-all}
+.cv{color:var(--ok)}
+select,textarea{width:100%;background:rgba(10,14,39,.7);border:1px solid var(--bdr);border-radius:7px;padding:10px;color:var(--text);font-family:inherit;font-size:.8em;transition:border-color .3s}
+select{cursor:pointer}select:focus,textarea:focus{outline:none;border-color:var(--a)}
+textarea{min-height:140px;resize:vertical;line-height:1.4}textarea::placeholder{color:#4a5470}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:8px 0}
+.fg label{font-size:.64em;color:#8B94B0;margin-bottom:2px;display:block}
+.fg input[type="number"]{width:100%;background:rgba(10,14,39,.7);border:1px solid var(--bdr);border-radius:5px;padding:6px;color:var(--text);font-family:inherit;font-size:.8em}
+.fg input:focus{outline:none;border-color:var(--a)}
+.ms,.fs{display:flex;gap:6px;margin:8px 0;flex-wrap:wrap}
+.ms label,.fs label{display:flex;align-items:center;gap:5px;padding:6px 10px;background:rgba(0,217,255,.03);border:1px solid var(--bdr);border-radius:5px;cursor:pointer;font-size:.75em;transition:all .3s}
+.ms input[type="radio"],.fs input[type="radio"]{accent-color:var(--a)}
+.ms label:has(input:checked),.fs label:has(input:checked){background:rgba(0,217,255,.1);border-color:var(--a);color:var(--a)}
+.br{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+button{padding:9px 16px;border:none;border-radius:5px;font-family:inherit;font-size:.75em;cursor:pointer;transition:all .3s;display:flex;align-items:center;gap:5px;font-weight:700}
+button:disabled{opacity:.35;cursor:not-allowed}
+.bp{background:linear-gradient(135deg,var(--a),#00a8cc);color:var(--bg)}.bp:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,217,255,.25)}
+.bs{background:rgba(42,63,95,.4);color:var(--text);border:1px solid var(--bdr)}.bs:hover:not(:disabled){border-color:var(--a);background:rgba(0,217,255,.06)}
+.bd{background:rgba(255,71,87,.08);color:var(--err);border:1px solid rgba(255,71,87,.2)}
+.bt2{background:rgba(0,255,163,.08);color:var(--ok);border:1px solid rgba(0,255,163,.2)}
+.db{background:rgba(10,14,39,.9);border:1px solid var(--bdr);border-radius:7px;padding:14px;font-size:.78em;line-height:1.8;word-break:break-all;max-height:360px;overflow-y:auto}
+.db::-webkit-scrollbar{width:5px}.db::-webkit-scrollbar-track{background:var(--bg)}.db::-webkit-scrollbar-thumb{background:var(--bdr);border-radius:3px}
+.n{font-weight:bold}.nA{color:var(--a)}.nT{color:var(--t)}.nC{color:var(--c)}.nG{color:var(--g)}
+.ph{color:#4a5470;font-style:italic}
+.si2{display:flex;justify-content:space-between;align-items:center;padding:6px 9px;background:rgba(0,217,255,.04);border:1px solid var(--bdr);border-radius:5px;margin-top:8px;font-size:.7em;flex-wrap:wrap;gap:4px}
+.si2 b{color:var(--a)}
+.legend{display:flex;gap:12px;flex-wrap:wrap;margin-top:10px;padding:9px;background:rgba(10,14,39,.35);border-radius:5px;border:1px solid var(--bdr);font-size:.74em}
+.li{display:flex;align-items:center;gap:5px}
+.dot{width:9px;height:9px;border-radius:50%;display:inline-block}
+.dA{background:var(--a);box-shadow:0 0 4px var(--a)}.dT{background:var(--t);box-shadow:0 0 4px var(--t)}.dC{background:var(--c);box-shadow:0 0 4px var(--c)}.dG{background:var(--g);box-shadow:0 0 4px var(--g)}
+.tabs{display:flex;gap:1px;border-bottom:2px solid var(--bdr);margin-bottom:14px;overflow-x:auto}
+.tab{padding:8px 12px;cursor:pointer;border-bottom:3px solid transparent;color:#8B94B0;white-space:nowrap;font-weight:600;margin-bottom:-2px;transition:all .3s;font-size:.72em}
+.tab.active{color:var(--a);border-bottom-color:var(--a)}.tab:hover:not(.active){color:var(--text)}
+.tb{display:none}.tb.active{display:block;animation:fu .2s ease}
+@keyframes fu{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.sh{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.st{color:var(--a);font-size:.85em}
+.sh .br{margin:0}.sh button{padding:5px 9px;font-size:.68em}
+.sg{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:8px;margin-top:12px}
+.si{background:rgba(0,217,255,.03);border:1px solid var(--bdr);border-radius:6px;padding:10px 6px;text-align:center}
+.sl{font-size:.58em;color:#8B94B0;text-transform:uppercase;letter-spacing:1px;margin-bottom:2px}
+.sv{font-size:1.1em;font-weight:bold;color:var(--a)}
+.dr{background:rgba(0,255,163,.06);border:1px solid var(--ok);border-radius:6px;padding:10px;margin-top:10px}
+.dr h4{color:var(--ok);margin-bottom:5px;font-size:.82em}
+.dr table{width:100%;font-size:.74em}
+.dr td{padding:4px 2px;border-bottom:1px solid rgba(0,255,163,.08)}
+.dr td:first-child{color:#8B94B0;width:32%}
+.mok{color:var(--ok);font-weight:bold}.mfl{color:var(--err);font-weight:bold}
+.mi{background:rgba(255,201,71,.06);border:1px solid rgba(255,201,71,.18);border-radius:5px;padding:7px;margin-top:6px;font-size:.68em;color:#FFC947}
+.toast{position:fixed;bottom:20px;right:20px;padding:10px 18px;border-radius:7px;font-weight:bold;font-size:.78em;opacity:0;transform:translateY(12px);transition:all .35s cubic-bezier(.68,-.55,.265,1.55);z-index:1000;max-width:340px;background:var(--ok);color:var(--bg)}
+.toast.show{opacity:1;transform:translateY(0)}.toast.error{background:var(--err);color:#fff}.toast.warning{background:var(--warn);color:var(--bg)}
+.sp{display:inline-block;width:10px;height:10px;border:2px solid currentColor;border-radius:50%;border-top-color:transparent;animation:spn .7s linear infinite}
+@keyframes spn{to{transform:rotate(360deg)}}
+table.otbl{width:100%;border-collapse:collapse;font-size:.66em;margin-top:8px}
+table.otbl th{background:rgba(0,217,255,.06);padding:5px 3px;text-align:left;border-bottom:1px solid var(--bdr);color:var(--a);position:sticky;top:0}
+table.otbl td{padding:3px;border-bottom:1px solid rgba(42,63,95,.2)}
+.sok{color:var(--ok)}.swn{color:var(--warn)}.sfl{color:var(--err)}
+.cbox{background:rgba(10,14,39,.45);border:1px solid var(--bdr);border-radius:6px;padding:10px;margin-top:8px}
+.cbox h5{color:var(--a);margin-bottom:5px;font-size:.78em}
+.cbar{height:10px;background:var(--bdr);border-radius:5px;overflow:hidden;margin:4px 0}
+.cbar-fill{height:100%;border-radius:5px}
+.srow{margin:6px 0}.srow label{font-size:.68em;color:#8B94B0;display:flex;justify-content:space-between;margin-bottom:2px}
+.srow input[type="range"]{width:100%;accent-color:var(--a)}
+.vw{display:flex;gap:12px;flex-wrap:wrap}
+.vcw{flex:1;min-width:220px;height:460px;border-radius:8px;overflow:hidden;border:1px solid var(--bdr);position:relative;background:#050818}
+.vcw canvas{width:100%!important;height:100%!important;display:block;cursor:grab}.vcw canvas:active{cursor:grabbing}
+.vc{width:190px;background:rgba(10,14,39,.55);border:1px solid var(--bdr);border-radius:8px;padding:12px;max-height:460px;overflow-y:auto}
+.vc h4{color:var(--a);margin-bottom:10px;font-size:.76em}
+.vc label{display:block;font-size:.6em;color:#8B94B0;margin:7px 0 2px;text-transform:uppercase;letter-spacing:1px}
+.vc input[type="range"]{width:100%;accent-color:var(--a)}
+.vc .rv{font-size:.68em;color:var(--a);text-align:right}
+.tr2{display:flex;align-items:center;justify-content:space-between;margin:5px 0}.tr2 span{font-size:.68em}
+.sw{position:relative;width:30px;height:16px;cursor:pointer}.sw input{opacity:0;width:0;height:0}
+.sw .sd{position:absolute;inset:0;background:var(--bdr);border-radius:8px;transition:.3s}
+.sw .sd::before{content:'';position:absolute;width:10px;height:10px;left:3px;bottom:3px;background:var(--text);border-radius:50%;transition:.3s}
+.sw input:checked+.sd{background:var(--a)}.sw input:checked+.sd::before{transform:translateX(14px)}
+.vinf{position:absolute;bottom:7px;left:7px;background:rgba(10,14,39,.92);border:1px solid var(--bdr);border-radius:4px;padding:4px 7px;font-size:.62em;pointer-events:none;opacity:0;transition:opacity .3s}.vinf.show{opacity:1}
+.vlg{position:absolute;top:7px;right:7px;background:rgba(10,14,39,.85);border:1px solid var(--bdr);border-radius:4px;padding:4px 7px;font-size:.56em;display:flex;flex-direction:column;gap:2px}
+.vli{display:flex;align-items:center;gap:4px}.vd2{width:6px;height:6px;border-radius:50%}
+.vht{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#4a5470;font-size:.78em;text-align:center;pointer-events:none}
+.vbp{position:absolute;top:7px;left:7px;background:rgba(10,14,39,.85);border:1px solid var(--bdr);border-radius:4px;padding:3px 7px;font-size:.6em;color:var(--a)}
+.swg{background:rgba(0,217,255,.06);border:1px solid var(--bdr);border-radius:6px;padding:8px;margin-top:6px;max-height:120px;overflow-y:auto;font-size:.7em}
+.dbar{display:flex;align-items:flex-end;gap:1px;margin-top:6px;height:40px}
+.dbar .dcol{flex:1;background:var(--a);border-radius:1px 1px 0 0;min-width:2px;opacity:.7}
+.itog{display:flex;gap:2px;margin-bottom:10px}
+.itog button{flex:1;padding:7px 10px;font-size:.7em;border:1px solid var(--bdr);background:rgba(42,63,95,.3);color:#8B94B0;border-radius:6px}
+.itog button.active{background:rgba(0,217,255,.1);border-color:var(--a);color:var(--a)}
+.tstats{display:flex;gap:10px;font-size:.62em;color:#8B94B0;margin-top:4px;flex-wrap:wrap}
+footer{text-align:center;margin-top:20px;padding:14px;color:#4a5470;font-size:.64em;border-top:1px solid var(--bdr);line-height:1.5}
+[title]{position:relative}
+.ttip{position:fixed;z-index:5000;max-width:280px;background:rgba(10,14,39,.97);color:var(--text);border:1px solid var(--bdr);border-radius:6px;padding:8px 10px;font-size:.68em;line-height:1.45;pointer-events:none;box-shadow:0 6px 20px rgba(0,0,0,.35);display:none}
+</style>
+</head>
+<body>
+<div class="ctr">
+<header>
+<h1>🧬 DNA STORAGE SIMULATOR</h1>
+<p class="sub">ADVANCED EDUCATIONAL BINARY-TO-NUCLEOTIDE CONVERTER</p>
+<div class="disc">⚠️ <b>Disclaimer:</b> Educational simulation. Not a laboratory-validated pipeline. Goldman-inspired and XOR-whitened encodings are simplified models. Use QC tab for constraint analysis. Synthesis feasibility scores are heuristic.</div>
+</header>
+
+<div class="grid">
+<div class="card">
+<h2 class="ct"><span>📤</span> ENCODE → DNA</h2>
+<div class="itog"><button class="active" id="modeFile" onclick="setInputMode('file')">📁 Upload File</button><button id="modeText" onclick="setInputMode('text')">⌨️ Type Text</button></div>
+<div id="filePanel">
+<div class="uz" id="uz"><div class="ui">📁</div><div>Click or drag a file</div><div class="uh">Max 500KB</div><input type="file" id="fi"></div>
+<div id="finfo" style="display:none"><div class="ig"><div class="ii"><div class="il">File</div><div class="iv" id="fn">-</div></div><div class="ii"><div class="il">Type</div><div class="iv" id="ft">-</div></div><div class="ii"><div class="il">Size</div><div class="iv" id="fs">-</div></div><div class="ii"><div class="il">CRC-32</div><div class="iv cv" id="fc">-</div></div></div></div>
+</div>
+<div id="textPanel" style="display:none">
+<textarea id="ti" placeholder="Type or paste text here. Supports words, numbers, punctuation, symbols, unicode, and multiple lines." style="min-height:110px"></textarea>
+<div class="tstats"><span>Chars: <b id="tCh">0</b></span><span>UTF-8: <b id="tBy">0</b> B</span><span>Lines: <b id="tLn">0</b></span><span>Est. DNA: <b id="tNt">0</b> nt</span></div>
+<div class="br" style="margin-top:6px"><button class="bs" id="samBtn">📝 Sample</button><button class="bs" id="samU">🌍 Unicode</button><button class="bd" id="clrTxt">🗑</button></div>
+</div>
+<div style="margin-top:10px"><label style="font-size:.62em;color:#8B94B0;display:block;margin-bottom:2px">SCHEME</label>
+<select id="schSel"><option value="naive">Naive 2-bit (no constraints)</option><option value="rotating">Rotating Codebook</option><option value="goldman">Goldman-inspired Ternary (no homopolymers)</option><option value="balanced" selected>XOR-Whitened (reduces bias)</option></select></div>
+<div class="fg"><div><label>PAYLOAD (nt)</label><input type="number" id="oLen" value="100" min="20" max="300"></div><div><label>REDUNDANCY</label><input type="number" id="oRed" value="3" min="1" max="10"></div></div>
+<div class="br"><button class="bp" id="encBtn" disabled><span>⚡</span> ENCODE</button><button class="bt2" id="testBtn"><span>🧪</span> TEST</button><button class="bd" id="clrEnc"><span>🗑</span></button></div>
+</div>
+
+<div class="card">
+<h2 class="ct"><span>📥</span> DECODE DNA → FILE</h2>
+<textarea id="di" spellcheck="false" placeholder="Paste DNA (ATCG). Supports encoded, raw, FASTA, or FASTA pool formats."></textarea>
+<div class="ms"><label><input type="radio" name="mode" value="encoded" checked> 🔒 Encoded</label><label><input type="radio" name="mode" value="raw"> 🧬 Raw (quaternary)</label><label><input type="radio" name="mode" value="pool"> 🧫 Pool (FASTA)</label></div>
+<div id="minfo" class="mi" style="display:none"><span id="minfoT"></span></div>
+<div class="fs"><label><input type="radio" name="fmt" value="auto" checked> Auto</label><label><input type="radio" name="fmt" value="raw"> Plain</label><label><input type="radio" name="fmt" value="fasta"> FASTA</label></div>
+<div class="br"><button class="bp" id="decBtn"><span>🔓</span> DECODE</button><button class="bs" id="revBtn" title="Paste reverse complement into input"><span>🔄</span> RevComp</button><button class="bs" id="impBtn"><span>📂</span> Import</button><input type="file" id="impFi" accept=".json,.dnastore,.dnastore.json" style="display:none"><button class="bd" id="clrDec"><span>🗑</span></button></div>
+<div id="decRes" style="display:none" class="dr"><h4 id="decT">✅</h4><table><tr><td>File</td><td id="dN">-</td></tr><tr><td>Type</td><td id="dTp">-</td></tr><tr><td>Size</td><td id="dSz">-</td></tr><tr><td>Integrity</td><td id="dM">-</td></tr></table><div class="br"><button class="bp" id="dlDec" style="display:none"><span>💾</span> DOWNLOAD</button></div></div>
+</div>
+</div>
+
+<div class="card">
+<div class="tabs">
+<div class="tab active" data-t="dna">🧬 DNA</div><div class="tab" data-t="bin">01 BIN</div><div class="tab" data-t="oligo">🧫 OLIGOS</div><div class="tab" data-t="qc">⚠️ QC</div><div class="tab" data-t="stats">📊 STATS</div><div class="tab" data-t="mut">☣️ MUTATE</div><div class="tab" data-t="v3d">🔬 HELIX</div>
+</div>
+
+<div class="tb active" id="dnaBody"><div class="sh"><h3 class="st">Encoded DNA</h3><div class="br"><button class="bs" id="cpD">📋</button><button class="bs" id="cpC">🔄 RevComp</button><button class="bs" id="dlF">FASTA</button><button class="bs" id="dlSt">.dnastore</button></div></div><div class="db" id="dnaBox"><span class="ph">No data.</span></div><div id="dnaI" class="si2" style="display:none"><span>Total: <b id="dnaCt">0</b> nt</span><span id="dnaN" style="color:#8B94B0"></span></div><div class="legend" id="legBox"></div></div>
+
+<div class="tb" id="binBody"><div class="sh"><h3 class="st">Raw File Binary</h3><button class="bs" id="cpB">📋</button></div><div class="db" id="binBox" style="color:var(--ok)"><span class="ph">Encode a file.</span></div><div id="binI" class="si2" style="display:none"><span><b id="binCt">0</b> bits = <b id="binBy">0</b> bytes</span></div></div>
+
+<div class="tb" id="oligoBody"><div class="sh"><h3 class="st">Oligo Pool</h3><button class="bs" id="dlO">Export Pool</button></div><div id="oligoI" class="si2" style="display:none"><span>Oligos: <b id="oCt">0</b> × <b id="oRd2">0</b> = <b id="oTot">0</b></span></div><div style="max-height:300px;overflow:auto"><table class="otbl"><thead><tr><th>#</th><th>BC</th><th>Len</th><th>GC%</th><th>HP</th><th>Score</th><th>Seq (40nt)</th></tr></thead><tbody id="oRows"></tbody></table></div><div class="mi">Structure: [Barcode 8nt][Payload][Parity 1nt]</div></div>
+
+<div class="tb" id="qcBody"><h3 class="st" style="margin-bottom:10px">Biochemical QC</h3><div id="qcC"><span class="ph">Encode first.</span></div></div>
+
+<div class="tb" id="statsBody"><h3 class="st" style="margin-bottom:10px">Statistics</h3><div class="sg"><div class="si"><div class="sl">Nucleotides</div><div class="sv" id="sT">0</div></div><div class="si"><div class="sl">A</div><div class="sv" id="sA" style="color:var(--a)">0</div></div><div class="si"><div class="sl">T</div><div class="sv" id="sTh" style="color:var(--t)">0</div></div><div class="si"><div class="sl">C</div><div class="sv" id="sC" style="color:var(--c)">0</div></div><div class="si"><div class="sl">G</div><div class="sv" id="sG" style="color:var(--g)">0</div></div><div class="si"><div class="sl">GC%</div><div class="sv" id="sGC">0%</div></div><div class="si"><div class="sl">Max HP</div><div class="sv" id="sHP">0</div></div><div class="si"><div class="sl">Scheme</div><div class="sv" id="sSch" style="font-size:.6em">-</div></div><div class="si"><div class="sl">bits/nt</div><div class="sv" id="sBN">0</div></div><div class="si"><div class="sl">Oligos</div><div class="sv" id="sOl">0</div></div><div class="si"><div class="sl">Size</div><div class="sv" id="sOr">0 B</div></div><div class="si"><div class="sl">Est. Cost</div><div class="sv" id="sCo">$0</div></div></div><div class="mi">💡 Cost is illustrative (~$0.07/1000nt bulk).</div></div>
+
+<div class="tb" id="mutBody"><h3 class="st" style="margin-bottom:10px">Error Channel Simulator</h3><p style="font-size:.68em;color:#8B94B0;margin-bottom:8px">Simulate synthesis/sequencing errors, recover via positional consensus. <b style="color:var(--warn)">⚠️ Note: Simple positional consensus cannot resolve frameshifts from indels. Real-world recovery uses MSA (e.g. Needleman-Wunsch) or Partial Order Alignment. This simulation filters out frameshifted reads and uses majority vote on same-length reads only.</b></p><div class="srow"><label><span>Substitution</span><span id="subV">1.0%</span></label><input type="range" id="subR" min="0" max="10" value="1" step="0.1"></div><div class="srow"><label><span>Deletion</span><span id="delV">0.5%</span></label><input type="range" id="delR" min="0" max="5" value="0.5" step="0.1"></div><div class="srow"><label><span>Insertion</span><span id="insV">0.3%</span></label><input type="range" id="insR" min="0" max="5" value="0.3" step="0.1"></div><div class="srow"><label><span>Dropout</span><span id="drpV">5%</span></label><input type="range" id="drpR" min="0" max="50" value="5" step="1"></div><div class="br"><button class="bp" id="mutBtn" disabled>☣️ SIMULATE</button><button class="bt2" id="recBtn" disabled>🔧 RECOVER</button></div><div id="mutR" style="display:none;margin-top:10px"></div><div id="rdGraph" style="display:none;margin-top:8px"><div style="font-size:.68em;color:#8B94B0;margin-bottom:4px">Read Depth per Oligo Index</div><div class="dbar" id="rdBar"></div></div></div>
+
+<div class="tb" id="v3dBody"><div class="vw"><div class="vcw" id="vW"><canvas id="cv3d"></canvas><div class="vbp" id="bpC">0</div><div class="vlg"><div class="vli"><div class="vd2" style="background:var(--a)"></div>A</div><div class="vli"><div class="vd2" style="background:var(--t)"></div>T</div><div class="vli"><div class="vd2" style="background:var(--c)"></div>C</div><div class="vli"><div class="vd2" style="background:var(--g)"></div>G</div><div class="vli"><div class="vd2" style="background:#8899AA"></div>Backbone</div></div><div class="vinf" id="vInf"><div id="vNN">-</div><div id="vND" style="font-size:.82em;color:#8B94B0">-</div></div><div class="vht" id="vHt">Encode a file to view<br>stylized helix</div></div><div class="vc"><h4>🎛 Helix</h4><div class="mi" style="margin-bottom:6px;font-size:.58em">Stylized B-DNA. Complement inferred. Fixed 10bp/turn geometry. Not a structural model.</div><label>Scroll</label><input type="range" id="vSt" min="0" max="0" value="0"><div class="rv" id="vStV">0</div><label>Visible</label><input type="range" id="vCn" min="10" max="500" value="80"><div class="rv" id="vCnV">80</div><label>Zoom</label><input type="range" id="vZm" min="5" max="120" value="35"><div class="tr2"><span>Rotate</span><label class="sw"><input type="checkbox" id="vAR" checked><span class="sd"></span></label></div><div class="tr2"><span>Labels</span><label class="sw"><input type="checkbox" id="vLb" checked><span class="sd"></span></label></div><div class="tr2"><span>H-Bonds</span><label class="sw"><input type="checkbox" id="vHB" checked><span class="sd"></span></label></div><div class="br" style="margin-top:8px"><button class="bs" id="vRs" style="flex:1">↺</button></div></div></div></div>
+</div>
+</div>
+
+<footer>DNA Storage Simulator v3.2 — Educational tool · Schemes: Naive · Rotating · Goldman-inspired · XOR-Whitened · Oligo segmentation with screened 8nt barcodes · Error simulation with positional consensus recovery · Sliding-window QC · RevComp support (manual + pool auto-detect) · Manual text input</footer>
+</div>
+
+<div id="toast" class="toast"></div>
+<div id="ttip" class="ttip" role="tooltip"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" crossorigin="anonymous"></script>
+<script>
+"use strict";
+
+(function(){
+
+var CMP = { A:'T', T:'A', C:'G', G:'C' };
+var NMAP = ['A','T','C','G'];
+var NDMAP = { A:0, T:1, C:2, G:3 };
+var MAX_SZ = 500 * 1024;
+var CLIM = 35000;
+var DNA_COLOR_LIMIT = 22000;
+var BIN_PREVIEW_LIMIT = 65536;
+var VER = 3;
+var MAGIC = [0x44,0x4E,0x41,0x31];
+var DEFAULT_BC_LEN = 8;
+var GOLD_HEADER_BYTES_SCAN_LIMIT = 4096;
+
+var S = {
+  file:null,
+  dna:'',
+  fbin:'',
+  meta:{},
+  scheme:'balanced',
+  oligos:[],
+  decBlob:null,
+  decName:'',
+  chunkCt:0,
+  mutPool:null,
+  payloadLens:null,
+  encodedNtLen:0,
+  inputMode:'file',
+  textBytes:null,
+  rawCombined:null,
+  lastRecoveredDNA:'',
+  threeReady:false
+};
+
+function $(id){ return document.getElementById(id); }
+
+var CT = (function(){
+  var t = new Uint32Array(256);
+  for (var n = 0; n < 256; n++) {
+    var c = n;
+    for (var k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+    t[n] = c >>> 0;
+  }
+  return t;
+})();
+
+function crc32(b){
+  if (!(b instanceof Uint8Array)) throw new Error('crc32: Uint8Array required');
+  var c = 0xFFFFFFFF;
+  for (var i = 0; i < b.length; i++) c = (c >>> 8) ^ CT[(c ^ b[i]) & 0xFF];
+  return ((c ^ 0xFFFFFFFF) >>> 0).toString(16).toUpperCase().padStart(8, '0');
+}
+
+function prng(seed){
+  seed = seed >>> 0;
+  return function(){
+    seed = (Math.imul(seed, 1103515245) + 12345) >>> 0;
+    return (seed >>> 16) & 0xFF;
+  };
+}
+
+var _toastTimer;
+function toast(m, t){
+  var e = $('toast');
+  e.textContent = m;
+  e.className = 'toast show' + (t === 'err' ? ' error' : t === 'warn' ? ' warning' : '');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(function(){ e.classList.remove('show'); }, 3500);
+}
+
+function fS(b){
+  if (typeof b !== 'number' || b <= 0) return '0 B';
+  var u = ['B','KB','MB'];
+  var i = Math.min(Math.floor(Math.log(b) / Math.log(1024)), 2);
+  return (b / Math.pow(1024, i)).toFixed(i ? 2 : 0) + ' ' + u[i];
+}
+
+function fN(n){
+  return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+function sN(n){
+  return String(n || 'file').replace(/[^a-zA-Z0-9._-]/g, '_').substring(0, 120);
+}
+
+function dlB(blob, nm){
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = sN(nm);
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(function(){ URL.revokeObjectURL(a.href); }, 1500);
+}
+
+function b2s(bytes){
+  var p = new Array(bytes.length);
+  for (var i = 0; i < bytes.length; i++) p[i] = bytes[i].toString(2).padStart(8, '0');
+  return p.join('');
+}
+
+function revComp(d){
+  return String(d).split('').reverse().map(function(c){ return CMP[c] || c; }).join('');
+}
+
+function cleanDNAString(s){
+  return String(s || '').toUpperCase().replace(/U/g, 'T').replace(/[^ATCG]/g, '');
+}
+
+function arraysEqual(a, b){
+  if (!a || !b || a.length !== b.length) return false;
+  for (var i = 0; i < a.length; i++) if (a[i] !== b[i]) return false;
+  return true;
+}
+
+function copyTextFallback(text){
+  var ta = document.createElement('textarea');
+  ta.value = text;
+  ta.setAttribute('readonly', '');
+  ta.style.position = 'fixed';
+  ta.style.left = '-9999px';
+  ta.style.top = '0';
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  var ok = false;
+  try { ok = document.execCommand('copy'); } catch (e) {}
+  document.body.removeChild(ta);
+  return ok;
+}
+
+function copyText(text, msg){
+  if (!text) { toast('Nothing to copy', 'err'); return; }
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(text).then(function(){ toast(msg || '✅ Copied'); }).catch(function(){
+      if (copyTextFallback(text)) toast(msg || '✅ Copied'); else toast('Copy failed', 'err');
+    });
+  } else {
+    if (copyTextFallback(text)) toast(msg || '✅ Copied'); else toast('Copy failed', 'err');
+  }
+}
+
+function verifyDecodeConsistency(bytes, meta){
+  if (!(bytes instanceof Uint8Array)) throw new Error('Verification bytes missing');
+  if (!meta || typeof meta.byteLen !== 'number' || typeof meta.checksum !== 'string') throw new Error('Verification metadata missing');
+  if (bytes.length !== meta.byteLen) throw new Error('Verification length mismatch');
+  var c = crc32(bytes);
+  if (c !== meta.checksum) throw new Error('Checksum mismatch');
+  return true;
+}
+
+/* ===== reversible scalable barcodes ===== */
+
+function idxToBC(idx, len){
+  len = len || DEFAULT_BC_LEN;
+  idx = idx >>> 0;
+  var out = '';
+  var prev = 'A';
+  for (var i = len - 1; i >= 0; i--) {
+    var digit = (idx >>> (i * 2)) & 3;
+    var choices = {
+      A:['C','G','T'],
+      C:['A','G','T'],
+      G:['A','C','T'],
+      T:['A','C','G']
+    }[prev];
+    var nt = choices[digit % 3];
+    out += nt;
+    prev = nt;
+  }
+  return out;
+}
+
+function bcToIdxExact(bc){
+  bc = cleanDNAString(bc);
+  if (!bc.length) return null;
+  var prev = 'A';
+  var digits = [];
+  for (var i = 0; i < bc.length; i++) {
+    var choices = {
+      A:['C','G','T'],
+      C:['A','G','T'],
+      G:['A','C','T'],
+      T:['A','C','G']
+    }[prev];
+    var pos = choices.indexOf(bc[i]);
+    if (pos < 0) return null;
+    digits.push(pos);
+    prev = bc[i];
+  }
+  var idx = 0;
+  for (var j = 0; j < digits.length; j++) idx = (idx << 2) | digits[j];
+  return idx >>> 0;
+}
+
+function bcToIdxApprox(bc, maxChunkCount){
+  bc = cleanDNAString(bc);
+  if (!bc.length) return null;
+  if (!(maxChunkCount > 0)) maxChunkCount = 4096;
+  var best = null, bestScore = -1;
+  var lim = Math.min(maxChunkCount, 65536);
+  for (var i = 0; i < lim; i++) {
+    var cand = idxToBC(i, bc.length);
+    var sc = 0;
+    for (var j = 0; j < bc.length; j++) if (bc[j] === cand[j]) sc++;
+    if (sc > bestScore) { bestScore = sc; best = i; }
+    if (bestScore === bc.length) break;
+  }
+  return bestScore >= Math.max(6, bc.length - 2) ? best : null;
+}
+
+/* ===== encoding schemes ===== */
+
+function naiveEnc(bytes){
+  var p = [];
+  for (var i = 0; i < bytes.length; i++) {
+    var v = bytes[i];
+    p.push(NMAP[(v >> 6) & 3], NMAP[(v >> 4) & 3], NMAP[(v >> 2) & 3], NMAP[v & 3]);
+  }
+  return p.join('');
+}
+
+function naiveDec(dna){
+  if (dna.length % 4) throw new Error('Naive: len must be ×4');
+  var b = new Uint8Array(dna.length / 4);
+  for (var i = 0; i < b.length; i++) {
+    var o = i * 4;
+    if (NDMAP[dna[o]] === undefined || NDMAP[dna[o+1]] === undefined || NDMAP[dna[o+2]] === undefined || NDMAP[dna[o+3]] === undefined) throw new Error('Naive: bad nucleotide');
+    b[i] = (NDMAP[dna[o]] << 6) | (NDMAP[dna[o+1]] << 4) | (NDMAP[dna[o+2]] << 2) | NDMAP[dna[o+3]];
+  }
+  return b;
+}
+
+var RE = [[0,1,2,3],[2,0,3,1],[3,2,1,0],[1,3,0,2]].map(function(a){ return a.map(function(v){ return NMAP[v]; }); });
+var RD = RE.map(function(m){ var d = {}; m.forEach(function(c,v){ d[c] = v; }); return d; });
+
+function rotEnc(bytes){
+  var p = [];
+  var pos = 0;
+  for (var i = 0; i < bytes.length; i++) {
+    var v = bytes[i];
+    for (var s = 6; s >= 0; s -= 2) {
+      p.push(RE[pos % 4][(v >> s) & 3]);
+      pos++;
+    }
+  }
+  return p.join('');
+}
+
+function rotDec(dna){
+  if (dna.length % 4) throw new Error('Rotating: len must be ×4');
+  var b = new Uint8Array(dna.length / 4);
+  for (var j = 0; j < b.length; j++) {
+    var v = 0;
+    for (var k = 0; k < 4; k++) {
+      var pos = j * 4 + k;
+      var val = RD[pos % 4][dna[pos]];
+      if (val === undefined) throw new Error('Bad nt@' + pos);
+      v = (v << 2) | val;
+    }
+    b[j] = v;
+  }
+  return b;
+}
+
+var GM = { A:['C','G','T'], C:['A','G','T'], G:['A','C','T'], T:['A','C','G'] };
+var GI = { A:{C:0,G:1,T:2}, C:{A:0,G:1,T:2}, G:{A:0,C:1,T:2}, T:{A:0,C:1,G:2} };
+
+function goldEnc(bytes){
+  var tr = [];
+  for (var i = 0; i < bytes.length; i++) {
+    var v = bytes[i];
+    var t = new Array(6);
+    for (var j = 5; j >= 0; j--) { t[j] = v % 3; v = Math.floor(v / 3); }
+    tr.push.apply(tr, t);
+  }
+  var p = [];
+  var prev = 'A';
+  for (var idx = 0; idx < tr.length; idx++) {
+    var n = GM[prev][tr[idx]];
+    p.push(n);
+    prev = n;
+  }
+  return p.join('');
+}
+
+function goldDec(dna, nB){
+  var tr = [];
+  var prev = 'A';
+  for (var i = 0; i < dna.length; i++) {
+    var c = dna[i];
+    if (!GI[prev] || GI[prev][c] === undefined) throw new Error('Goldman: bad ' + prev + '→' + c);
+    tr.push(GI[prev][c]);
+    prev = c;
+  }
+  if (typeof nB !== 'number' || nB < 0) throw new Error('Goldman: missing byte length');
+  if (tr.length < nB * 6) throw new Error('Goldman: insufficient trits');
+  var b = new Uint8Array(nB);
+  for (var bi = 0; bi < nB; bi++) {
+    var v = 0;
+    for (var tj = 0; tj < 6; tj++) v = v * 3 + tr[bi * 6 + tj];
+    if (v > 255) throw new Error('Goldman overflow @' + bi);
+    b[bi] = v;
+  }
+  return b;
+}
+
+function balEnc(bytes, seed){
+  seed = seed || 42;
+  var r = prng(seed);
+  var s = new Uint8Array(bytes.length);
+  for (var i = 0; i < bytes.length; i++) s[i] = bytes[i] ^ r();
+  return naiveEnc(s);
+}
+
+function balDec(dna, seed){
+  seed = seed || 42;
+  var s = naiveDec(dna);
+  var r = prng(seed);
+  var b = new Uint8Array(s.length);
+  for (var i = 0; i < s.length; i++) b[i] = s[i] ^ r();
+  return b;
+}
+
+function encDNA(bytes, sch){
+  if (sch === 'rotating') return rotEnc(bytes);
+  if (sch === 'goldman') return goldEnc(bytes);
+  if (sch === 'balanced') return balEnc(bytes);
+  return naiveEnc(bytes);
+}
+
+function decDNA(dna, sch, nB){
+  if (sch === 'rotating') return rotDec(dna);
+  if (sch === 'goldman') return goldDec(dna, nB);
+  if (sch === 'balanced') return balDec(dna);
+  return naiveDec(dna);
+}
+
+function schLabel(s){
+  return { naive:'Naive 2-bit', rotating:'Rotating Codebook', goldman:'Goldman-inspired Ternary', balanced:'XOR-Whitened' }[s] || s;
+}
+
+function updateLegend(sch){
+  var box = $('legBox');
+  if (sch === 'naive' || sch === 'balanced') {
+    box.innerHTML = '<div class="li"><span class="dot dA"></span><b>A</b>=00</div>' +
+      '<div class="li"><span class="dot dT"></span><b>T</b>=01</div>' +
+      '<div class="li"><span class="dot dC"></span><b>C</b>=10</div>' +
+      '<div class="li"><span class="dot dG"></span><b>G</b>=11</div>' +
+      (sch === 'balanced' ? '<div style="color:#8B94B0;font-size:.85em">After XOR whitening</div>' : '');
+  } else if (sch === 'rotating') {
+    box.innerHTML = '<div style="color:#8B94B0;font-size:.85em">2-bit values are mapped with a position-dependent codebook. This reduces simple repeating patterns. There is no fixed base-to-bits legend for every position.</div>';
+  } else if (sch === 'goldman') {
+    box.innerHTML = '<div style="color:#8B94B0;font-size:.85em">Ternary symbols are chosen based on the previous base, so the same nucleotide is not repeated immediately. This is a simplified educational Goldman-inspired rule.</div>';
+  }
+}
+
+/* ===== binary container ===== */
+
+function buildComb(fileBytes, fn, mt, sch, payloadLen, redundancy, bcLen){
+  var meta = {
+    filename: String(fn).substring(0,255),
+    mimeType: String(mt || 'application/octet-stream').substring(0,100),
+    size: fileBytes.length,
+    checksum: crc32(fileBytes),
+    byteLen: fileBytes.length,
+    scheme: sch,
+    seed: 42,
+    version: '3.2',
+    encodedNtLen: 0,
+    chunkCount: 0,
+    lastChunkLen: 0,
+    payloadLen: payloadLen,
+    redundancy: redundancy,
+    barcodeLen: bcLen || DEFAULT_BC_LEN
+  };
+  return buildCombFromMeta(fileBytes, meta, sch);
+}
+
+function buildCombFromMeta(fileBytes, meta, sch){
+  var ms = JSON.stringify(meta);
+  var mb = new TextEncoder().encode(ms);
+  var ml = mb.length;
+  var c = new Uint8Array(16 + ml + fileBytes.length);
+  var dv = new DataView(c.buffer);
+  c[0] = MAGIC[0]; c[1] = MAGIC[1]; c[2] = MAGIC[2]; c[3] = MAGIC[3];
+  c[4] = VER; c[5] = 0;
+  c[6] = ['naive','rotating','goldman','balanced'].indexOf(sch);
+  c[7] = 0;
+  dv.setUint32(8, 0, false);
+  dv.setUint32(12, ml, false);
+  c.set(mb, 16);
+  c.set(fileBytes, 16 + ml);
+  dv.setUint32(8, parseInt(crc32(c.slice(0, 8)), 16) >>> 0, false);
+  return { combined:c, meta:meta };
+}
+
+function parseComb(bytes){
+  if (bytes.length < 16) throw new Error('Too short');
+  if (bytes[0] !== MAGIC[0] || bytes[1] !== MAGIC[1] || bytes[2] !== MAGIC[2] || bytes[3] !== MAGIC[3]) throw new Error('Bad magic. Try Raw mode.');
+  var dv = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+  var hdr = bytes.slice(0, 8);
+  var storedHeaderCrc = dv.getUint32(8, false) >>> 0;
+  var calcHeaderCrc = parseInt(crc32(hdr), 16) >>> 0;
+  if (storedHeaderCrc !== calcHeaderCrc) throw new Error('Header CRC fail');
+  var ml = dv.getUint32(12, false);
+  if (ml > bytes.length - 16 || ml < 1) throw new Error('Bad meta length');
+  var meta;
+  try { meta = JSON.parse(new TextDecoder().decode(bytes.slice(16, 16 + ml))); }
+  catch (e) { throw new Error('Meta parse: ' + e.message); }
+  if (typeof meta.filename !== 'string' || typeof meta.checksum !== 'string' || meta.checksum.length !== 8 || typeof meta.byteLen !== 'number') throw new Error('Invalid metadata');
+  var fileBytes = bytes.slice(16 + ml);
+  if (fileBytes.length !== meta.byteLen) throw new Error('Size mismatch');
+  var comp = crc32(fileBytes);
+  return { fileBytes:fileBytes, meta:meta, ok: comp === meta.checksum, computed: comp };
+}
+
+/* ===== analysis ===== */
+
+function maxHP(s){
+  if (!s.length) return 0;
+  var m = 1, c = 1;
+  for (var i = 1; i < s.length; i++) {
+    if (s[i] === s[i-1]) c++; else c = 1;
+    if (c > m) m = c;
+  }
+  return m;
+}
+
+function gcPct(s){
+  if (!s.length) return 0;
+  var g = 0;
+  for (var i = 0; i < s.length; i++) if (s[i] === 'G' || s[i] === 'C') g++;
+  return g / s.length * 100;
+}
+
+function shannon(s){
+  if (!s.length) return 0;
+  var f = {};
+  for (var i = 0; i < s.length; i++) f[s[i]] = (f[s[i]] || 0) + 1;
+  var h = 0;
+  var n = s.length;
+  for (var k in f) { var p = f[k] / n; if (p > 0) h -= p * Math.log2(p); }
+  return h;
+}
+
+function hairpinH(s, sl){
+  sl = sl || 6;
+  if (s.length < sl * 2 + 3) return false;
+  var lim = Math.min(s.length - sl * 2 - 3, 2000);
+  for (var i = 0; i < lim; i++) {
+    var st = s.substring(i, i + sl);
+    var rc = st.split('').reverse().map(function(c){ return CMP[c] || c; }).join('');
+    if (s.substring(i + sl + 3, Math.min(i + sl + 203, s.length)).indexOf(rc) >= 0) return true;
+  }
+  return false;
+}
+
+function feasScore(s){
+  var gc = gcPct(s), hp = maxHP(s), e = shannon(s), hr = hairpinH(s, 6);
+  var sc = 100;
+  if (gc > 65 || gc < 35) sc -= 30; else if (gc > 60 || gc < 40) sc -= 15;
+  if (hp > 5) sc -= 25; else if (hp > 3) sc -= 10;
+  if (e < 1.5) sc -= 20;
+  if (hr) sc -= 15;
+  return Math.max(0, sc);
+}
+
+function slideGC(s, win){
+  win = win || 20;
+  if (s.length < win) return [];
+  var out = [];
+  var gc = 0;
+  for (var i = 0; i < win; i++) if (s[i] === 'G' || s[i] === 'C') gc++;
+  out.push(gc / win * 100);
+  for (var j = win; j < s.length; j++) {
+    var rem = s[j - win], add = s[j];
+    if (rem === 'G' || rem === 'C') gc--;
+    if (add === 'G' || add === 'C') gc++;
+    out.push(gc / win * 100);
+  }
+  return out;
+}
+
+/* ===== oligos ===== */
+
+function ntParity(pay){
+  var x = 0;
+  for (var i = 0; i < pay.length; i++) x ^= NDMAP[pay[i]];
+  return NMAP[x & 3];
+}
+
+function buildOligos(dna, payloadLen, redundancy, bcLen){
+  bcLen = bcLen || DEFAULT_BC_LEN;
+  var chunks = [];
+  for (var i = 0; i < dna.length; i += payloadLen) chunks.push(dna.substring(i, Math.min(i + payloadLen, dna.length)));
+  var payloadLens = chunks.map(function(c){ return c.length; });
+  var ol = [];
+  for (var idx = 0; idx < chunks.length; idx++) {
+    var pay = chunks[idx];
+    var bc = idxToBC(idx, bcLen);
+    var par = ntParity(pay);
+    var full = bc + pay + par;
+    for (var r = 0; r < redundancy; r++) {
+      ol.push({ idx:idx, copy:r, barcode:bc, payload:pay, parity:par, fullSeq:full, bcLen:bcLen });
+    }
+  }
+  return { oligos:ol, chunkCount:chunks.length, payloadLens:payloadLens };
+}
+
+/* ===== mutation simulation ===== */
+
+function mutatePool(ol, sub, del, ins, drp){
+  var B = 'ATCG';
+  var m = [];
+  for (var oi = 0; oi < ol.length; oi++) {
+    var o = ol[oi];
+    if (Math.random() * 100 < drp) continue;
+    var s = o.fullSeq.split('');
+    for (var i = 0; i < s.length; i++) {
+      if (Math.random() * 100 < sub) {
+        var n;
+        do { n = B[Math.random() * 4 | 0]; } while (n === s[i]);
+        s[i] = n;
+      }
+    }
+    for (var di = s.length - 1; di >= 0; di--) if (Math.random() * 100 < del) s.splice(di, 1);
+    for (var ii = s.length - 1; ii >= 0; ii--) if (Math.random() * 100 < ins) s.splice(ii, 0, B[Math.random() * 4 | 0]);
+    m.push({ idx:o.idx, copy:o.copy, barcode:o.barcode, payload:o.payload, parity:o.parity, fullSeq:s.join(''), bcLen:o.bcLen || DEFAULT_BC_LEN });
+  }
+  return m;
+}
+
+/* ===== pool recovery ===== */
+
+function recoverPool(reads, chunkCount, payloadLen, payloadLens, bcLen){
+  bcLen = bcLen || DEFAULT_BC_LEN;
+  var norm = [];
+  for (var ri = 0; ri < reads.length; ri++) {
+    if (typeof reads[ri] === 'string') norm.push({ fullSeq: cleanDNAString(reads[ri]) });
+    else norm.push({ fullSeq: cleanDNAString(reads[ri].fullSeq || '') });
+  }
+
+  var groups = {};
+  for (var oi = 0; oi < norm.length; oi++) {
+    var seq = norm[oi].fullSeq;
+    if (seq.length < bcLen + 2) continue;
+
+    var idx = null;
+    var isRC = false;
+
+    var pref = seq.substring(0, bcLen);
+    idx = bcToIdxExact(pref);
+
+    if (idx === null || idx >= chunkCount) {
+      var rcSeq = revComp(seq);
+      var rcPref = rcSeq.substring(0, bcLen);
+      var ridx = bcToIdxExact(rcPref);
+      if (ridx !== null && ridx < chunkCount) { idx = ridx; isRC = true; }
+    }
+
+    if (idx === null || idx >= chunkCount) {
+      var approx = bcToIdxApprox(pref, chunkCount);
+      if (approx !== null && approx < chunkCount) idx = approx;
+    }
+
+    if (idx === null || idx >= chunkCount) {
+      var rcSeq2 = revComp(seq);
+      var approx2 = bcToIdxApprox(rcSeq2.substring(0, bcLen), chunkCount);
+      if (approx2 !== null && approx2 < chunkCount) { idx = approx2; isRC = true; }
+    }
+
+    if (idx === null || idx >= chunkCount) continue;
+
+    var useSeq = isRC ? revComp(seq) : seq;
+    if (useSeq.length < bcLen + 2) continue;
+    var payload = useSeq.substring(bcLen, useSeq.length - 1);
+
+    if (!groups[idx]) groups[idx] = [];
+    groups[idx].push(payload);
+  }
+
+  var rec = [];
+  var good = 0, bad = 0;
+  var depths = [];
+
+  for (var ci = 0; ci < chunkCount; ci++) {
+    var chunkReads = groups[ci];
+    var expectLen = payloadLens ? payloadLens[ci] : payloadLen;
+    if (!chunkReads || !chunkReads.length) {
+      bad++;
+      rec.push(null);
+      depths.push(0);
+      continue;
+    }
+    depths.push(chunkReads.length);
+
+    var goodReads = [];
+    for (var gri = 0; gri < chunkReads.length; gri++) {
+      if (chunkReads[gri].length === expectLen) goodReads.push(chunkReads[gri]);
+    }
+
+    if (!goodReads.length) {
+      bad++;
+      rec.push(null);
+      continue;
+    }
+
+    var con = '';
+    for (var p = 0; p < expectLen; p++) {
+      var v = { A:0, T:0, C:0, G:0 };
+      for (var g2 = 0; g2 < goodReads.length; g2++) {
+        var nt = goodReads[g2][p];
+        if (v[nt] !== undefined) v[nt]++;
+      }
+      var best = 'A', bv = -1;
+      for (var vb in v) if (v[vb] > bv) { best = vb; bv = v[vb]; }
+      con += best;
+    }
+    rec.push(con);
+    good++;
+  }
+
+  return {
+    rec: rec,
+    good: good,
+    bad: bad,
+    total: chunkCount,
+    depths: depths,
+    recoveredDna: rec.map(function(r){ return r || ''; }).join('')
+  };
+}
+
+/* ===== decoding helpers ===== */
+
+function cleanIn(raw){
+  var fmtEl = document.querySelector('input[name="fmt"]:checked');
+  var fmt = fmtEl ? fmtEl.value : 'auto';
+  var d, w = [];
+  if (fmt === 'fasta' || (fmt === 'auto' && raw.trimStart().charAt(0) === '>')) {
+    var ln = raw.split('\n');
+    if (ln.filter(function(l){ return l.trimStart().charAt(0) === '>'; }).length > 1) w.push('Multi-record FASTA');
+    d = ln.filter(function(l){
+      var t = l.trimStart();
+      return t.charAt(0) !== '>' && t.charAt(0) !== ';';
+    }).join('');
+  } else {
+    d = raw;
+  }
+  var up = d.toUpperCase().replace(/U/g, 'T');
+  var cl = up.replace(/[^ATCG]/g, '');
+  var rm = up.length - cl.length;
+  if (rm) w.push(rm + ' chars removed');
+  if (w.length) toast('⚠️ ' + w.join('; '), 'warn');
+  return cl;
+}
+
+function schemeFromHeaderIndex(idx){
+  return ['naive','rotating','goldman','balanced'][idx] || null;
+}
+
+function detectSchemeFromContainer(bytes){
+  if (bytes.length < 16) return null;
+  if (!(bytes[0] === MAGIC[0] && bytes[1] === MAGIC[1] && bytes[2] === MAGIC[2] && bytes[3] === MAGIC[3])) return null;
+  return schemeFromHeaderIndex(bytes[6]);
+}
+
+function tryGoldmanDecode(dna){
+  var maxBytes = Math.min(Math.floor(dna.length / 6), GOLD_HEADER_BYTES_SCAN_LIMIT);
+  for (var nB = 16; nB <= maxBytes; nB++) {
+    try {
+      var tmp = decDNA(dna, 'goldman', nB);
+      if (tmp.length >= 16 && tmp[0] === MAGIC[0] && tmp[1] === MAGIC[1] && tmp[2] === MAGIC[2] && tmp[3] === MAGIC[3]) {
+        var parsed = parseComb(tmp);
+        if (parsed.ok) return { bytes: tmp, parsed: parsed };
+      }
+    } catch (e) {}
+  }
+  return null;
+}
+
+function tryScheme(d, sch){
+  try {
+    var clean = cleanDNAString(d);
+    if (sch === 'goldman') {
+      var gold = tryGoldmanDecode(clean);
+      return gold ? sch : null;
+    } else {
+      if (clean.length % 4) return null;
+      var bytes = decDNA(clean, sch, clean.length / 4);
+      if (bytes.length < 16) return null;
+      if (!(bytes[0] === MAGIC[0] && bytes[1] === MAGIC[1] && bytes[2] === MAGIC[2] && bytes[3] === MAGIC[3])) return null;
+      var r = parseComb(bytes);
+      return r.ok ? sch : null;
+    }
+  } catch (e) { return null; }
+}
+
+function autoDet(d){
+  var clean = cleanDNAString(d);
+  var schemes = ['balanced', 'naive', 'rotating', 'goldman'];
+  for (var i = 0; i < schemes.length; i++) {
+    var r = tryScheme(clean, schemes[i]);
+    if (r) return r;
+  }
+  return null;
+}
+
+function decodeEncodedWithVerification(dna, declaredScheme){
+  var clean = cleanDNAString(dna);
+  var sch = declaredScheme || autoDet(clean);
+  if (!sch) throw new Error('Cannot detect scheme (CRC/magic fail). Try Raw mode or reverse complement.');
+
+  var bytes, parsed;
+
+  if (sch === 'goldman') {
+    var gold = tryGoldmanDecode(clean);
+    if (!gold) throw new Error('Goldman decode failed verification');
+    bytes = gold.bytes;
+    parsed = gold.parsed;
+  } else {
+    if (clean.length % 4) throw new Error('Encoded DNA length mismatch for selected scheme');
+    bytes = decDNA(clean, sch, clean.length / 4);
+    parsed = parseComb(bytes);
+  }
+
+  if (!parsed.ok) throw new Error('Integrity verification failed');
+  verifyDecodeConsistency(parsed.fileBytes, parsed.meta);
+
+  S.decBlob = new Blob([parsed.fileBytes], { type: parsed.meta.mimeType || 'application/octet-stream' });
+  S.decName = sN(parsed.meta.filename);
+  return parsed;
+}
+
+/* ===== core encode/decode ===== */
+
+function doEnc(fileBytes, fn, mt){
+  var sch = $('schSel').value;
+  var payloadLen = Math.max(20, Math.min(300, parseInt($('oLen').value, 10) || 100));
+  var redundancy = Math.max(1, Math.min(10, parseInt($('oRed').value, 10) || 3));
+  var bcLen = DEFAULT_BC_LEN;
+
+  S.fbin = b2s(fileBytes);
+
+  var prelim = buildComb(fileBytes, fn, mt, sch, payloadLen, redundancy, bcLen);
+  var dna0 = encDNA(prelim.combined, sch);
+  var oligoInfo0 = buildOligos(dna0, payloadLen, redundancy, bcLen);
+
+  prelim.meta.encodedNtLen = dna0.length;
+  prelim.meta.chunkCount = oligoInfo0.chunkCount;
+  prelim.meta.lastChunkLen = oligoInfo0.payloadLens.length ? oligoInfo0.payloadLens[oligoInfo0.payloadLens.length - 1] : 0;
+
+  var rebuilt = buildCombFromMeta(fileBytes, prelim.meta, sch);
+  var finalDNA = encDNA(rebuilt.combined, sch);
+
+  var verifyBytes = (sch === 'goldman')
+    ? decDNA(finalDNA, sch, rebuilt.combined.length)
+    : decDNA(finalDNA, sch, finalDNA.length / 4);
+
+  if (!arraysEqual(verifyBytes, rebuilt.combined)) throw new Error('Internal encode verification failed');
+
+  S.dna = finalDNA;
+  S.rawCombined = rebuilt.combined;
+  S.encodedNtLen = finalDNA.length;
+  S.meta = prelim.meta;
+  S.scheme = sch;
+
+  var fin = buildOligos(S.dna, payloadLen, redundancy, bcLen);
+  S.oligos = fin.oligos;
+  S.chunkCt = fin.chunkCount;
+  S.payloadLens = fin.payloadLens;
+
+  rDNA(S.dna);
+  rBin(S.fbin);
+  rOligos(S.oligos, S.chunkCt, redundancy);
+  rQC(S.dna, S.oligos, S.chunkCt, payloadLen);
+  uStats(S.dna, fileBytes.length, sch, S.chunkCt);
+  updateLegend(sch);
+  $('mutBtn').disabled = false;
+  upd3D();
+  toast('✅ ' + fN(S.dna.length) + ' nt');
+}
+
+function doDec(dna){
+  var modeEl = document.querySelector('input[name="mode"]:checked');
+  var mode = modeEl ? modeEl.value : 'encoded';
+  if (mode === 'raw') {
+    var clean = cleanDNAString(dna);
+    if (clean.length % 4) throw new Error('Raw: len must be ×4');
+    var b = naiveDec(clean);
+    S.decBlob = new Blob([b], { type:'application/octet-stream' });
+    S.decName = 'decoded.bin';
+    return { meta:{ filename:'decoded.bin', mimeType:'application/octet-stream', size:b.length }, ok:true, computed:crc32(b), isRaw:true, fileBytes:b };
+  }
+  return decodeEncodedWithVerification(dna, null);
+}
+
+function parsePoolMetadata(rawText){
+  var lines = rawText.split('\n');
+  var meta = {
+    chunkCount:null,
+    payloadLen:null,
+    lastChunkLen:null,
+    encodedNtLen:null,
+    scheme:null,
+    barcodeLen:DEFAULT_BC_LEN
+  };
+  var reads = [];
+  for (var i = 0; i < lines.length; i++) {
+    var line = lines[i].trim();
+    if (!line) continue;
+    if (line.charAt(0) === '>') {
+      var parts = line.substring(1).split('|');
+      for (var j = 0; j < parts.length; j++) {
+        var seg = parts[j];
+        var kv = seg.split(':');
+        if (kv.length < 2) continue;
+        var k = kv[0].toLowerCase();
+        var v = kv.slice(1).join(':');
+        if (k === 'chunkcount' || k === 'cc') meta.chunkCount = parseInt(v, 10);
+        else if (k === 'payloadlen' || k === 'pl') meta.payloadLen = parseInt(v, 10);
+        else if (k === 'lastchunklen' || k === 'lcl') meta.lastChunkLen = parseInt(v, 10);
+        else if (k === 'encodedntlen' || k === 'enl') meta.encodedNtLen = parseInt(v, 10);
+        else if (k === 'scheme' || k === 'sc') meta.scheme = v;
+        else if (k === 'barcodelen' || k === 'bcl') meta.barcodeLen = parseInt(v, 10);
+      }
+    } else {
+      var clean = line.toUpperCase().replace(/[^ATCG]/g, '');
+      if (clean.length > 10) reads.push(clean);
+    }
+  }
+  return { meta:meta, reads:reads };
+}
+
+function doPoolDec(rawText){
+  var parsedPool = parsePoolMetadata(rawText);
+  var reads = parsedPool.reads;
+  var pMeta = parsedPool.meta;
+  if (!reads.length) throw new Error('No valid reads found in pool FASTA.');
+
+  var bcLen = pMeta.barcodeLen || DEFAULT_BC_LEN;
+  var chunkCount = pMeta.chunkCount;
+
+  if (!(chunkCount > 0)) {
+    var maxIdx = -1;
+    for (var ri = 0; ri < reads.length; ri++) {
+      var pref = reads[ri].substring(0, bcLen);
+      var idx = bcToIdxExact(pref);
+      if (idx !== null && idx > maxIdx) maxIdx = idx;
+      var rc = revComp(reads[ri]);
+      var ridx = bcToIdxExact(rc.substring(0, bcLen));
+      if (ridx !== null && ridx > maxIdx) maxIdx = ridx;
+    }
+    chunkCount = maxIdx + 1;
+  }
+
+  if (!(chunkCount > 0)) throw new Error('No recognized chunk indices in pool.');
+
+  var payloadLen = pMeta.payloadLen || (parseInt($('oLen').value, 10) || 100);
+  var payloadLens = null;
+  if (pMeta.lastChunkLen && pMeta.chunkCount && pMeta.payloadLen) {
+    payloadLens = new Array(pMeta.chunkCount);
+    for (var i = 0; i < pMeta.chunkCount; i++) payloadLens[i] = pMeta.payloadLen;
+    payloadLens[pMeta.chunkCount - 1] = pMeta.lastChunkLen;
+  }
+
+  var res = recoverPool(reads, chunkCount, payloadLen, payloadLens, bcLen);
+  if (res.bad > 0) toast('⚠️ ' + res.bad + ' of ' + chunkCount + ' chunks missing', 'warn');
+
+  var reconstructed = res.recoveredDna;
+  if (pMeta.encodedNtLen && reconstructed.length > pMeta.encodedNtLen) reconstructed = reconstructed.substring(0, pMeta.encodedNtLen);
+  if (!reconstructed.length) throw new Error('No data reconstructed from pool.');
+
+  S.lastRecoveredDNA = reconstructed;
+
+  if (pMeta.scheme === 'goldman' && res.bad > 0) {
+    throw new Error('Pool reconstruction incomplete. Goldman-inspired decoding is fragile when chunks are missing.');
+  }
+
+  var attempt = decodeEncodedWithVerification(reconstructed, pMeta.scheme || null);
+  return attempt;
+}
+
+/* ===== rendering ===== */
+
+function rDNA(d){
+  var b = $('dnaBox'), inf = $('dnaI');
+  if (!d) { b.innerHTML = '<span class="ph">No data.</span>'; inf.style.display = 'none'; return; }
+  inf.style.display = 'flex';
+  $('dnaCt').textContent = fN(d.length);
+  if (d.length <= DNA_COLOR_LIMIT) {
+    var cl = { A:'nA', T:'nT', C:'nC', G:'nG' };
+    var p = new Array(d.length);
+    for (var i = 0; i < d.length; i++) p[i] = '<span class="n ' + cl[d[i]] + '">' + d[i] + '</span>';
+    b.innerHTML = p.join('');
+    $('dnaN').textContent = 'Complete·Colored';
+  } else {
+    b.textContent = d;
+    $('dnaN').textContent = 'Complete·Plain (' + fN(d.length) + ')';
+  }
+}
+
+function rBin(s){
+  var b = $('binBox'), inf = $('binI');
+  if (!s) { b.innerHTML = '<span class="ph">Encode a file.</span>'; inf.style.display = 'none'; return; }
+  inf.style.display = 'flex';
+  $('binCt').textContent = fN(s.length);
+  $('binBy').textContent = fN(Math.floor(s.length / 8));
+  if (s.length > BIN_PREVIEW_LIMIT) {
+    var prev = [];
+    for (var i = 0; i < Math.min(s.length, 4096); i += 8) prev.push(s.substring(i, i + 8));
+    b.textContent = prev.join(' ') + ' ... [preview only, full binary is still copyable]';
+  } else {
+    var ch = [];
+    for (var j = 0; j < s.length; j += 8) ch.push(s.substring(j, Math.min(j + 8, s.length)));
+    b.textContent = ch.join(' ');
+  }
+}
+
+function rOligos(ol, cc, red){
+  $('oCt').textContent = cc;
+  $('oRd2').textContent = red;
+  $('oTot').textContent = ol.length;
+  $('oligoI').style.display = 'flex';
+  var rows = $('oRows');
+  rows.innerHTML = '';
+  var seen = {};
+  var shown = 0;
+  for (var oi = 0; oi < ol.length; oi++) {
+    var o = ol[oi];
+    if (seen[o.idx]) continue;
+    seen[o.idx] = true;
+    if (shown++ >= 100) {
+      var trm = document.createElement('tr');
+      trm.innerHTML = '<td colspan="7" style="text-align:center;color:#8B94B0">... +' + fN(cc - 100) + ' more (export to view all)</td>';
+      rows.appendChild(trm);
+      break;
+    }
+    var s = o.fullSeq;
+    var gc = gcPct(s).toFixed(0);
+    var hp = maxHP(s);
+    var sc = feasScore(s);
+    var tr = document.createElement('tr');
+    tr.innerHTML = '<td>' + o.idx + '</td><td style="font-size:.6em">' + o.barcode + '</td><td>' + s.length + '</td><td>' + gc + '</td><td>' + hp + '</td><td class="' + (sc >= 70 ? 'sok' : sc >= 40 ? 'swn' : 'sfl') + '">' + sc + '</td><td style="font-size:.6em">' + s.substring(0, 40) + (s.length > 40 ? '…' : '') + '</td>';
+    rows.appendChild(tr);
+  }
+}
+
+function rQC(dna, ol, cc, pLen){
+  var seen = {};
+  var scores = [], gcVals = [], hpVals = [];
+  for (var oi = 0; oi < ol.length; oi++) {
+    var o = ol[oi];
+    if (seen[o.idx]) continue;
+    seen[o.idx] = true;
+    scores.push(feasScore(o.fullSeq));
+    gcVals.push(gcPct(o.fullSeq));
+    hpVals.push(maxHP(o.fullSeq));
+  }
+  var avg = scores.length ? Math.round(scores.reduce(function(a,b){ return a+b; },0) / scores.length) : 0;
+  var ps = scores.filter(function(s){ return s >= 70; }).length;
+  var ws = scores.filter(function(s){ return s >= 40 && s < 70; }).length;
+  var fs2 = scores.filter(function(s){ return s < 40; }).length;
+  var swGC = slideGC(dna, 20);
+  var swMin = swGC.length ? Math.min.apply(null, swGC).toFixed(0) : 'N/A';
+  var swMax = swGC.length ? Math.max.apply(null, swGC).toFixed(0) : 'N/A';
+  var hpOligos = 0;
+  seen = {};
+  for (var oi2 = 0; oi2 < ol.length; oi2++) {
+    var o2 = ol[oi2];
+    if (seen[o2.idx]) continue;
+    seen[o2.idx] = true;
+    if (hairpinH(o2.fullSeq, 5)) hpOligos++;
+  }
+  var gcAvg = gcVals.length ? (gcVals.reduce(function(a,b){ return a+b; },0) / gcVals.length).toFixed(0) : '0';
+  var maxOHP = hpVals.length ? Math.max.apply(null, hpVals) : 0;
+
+  var h = '<div class="cbox"><h5>Per-Oligo Analysis (' + cc + ' oligos)</h5>';
+  h += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;font-size:.74em;margin-top:5px">';
+  h += '<div>Avg Score: <b>' + avg + '%</b></div>';
+  h += '<div>Avg GC: <b>' + gcAvg + '%</b></div>';
+  h += '<div>Avg HP: <b>' + maxOHP + '</b></div>';
+  h += '<div>Hairpin risk: <b style="color:' + (hpOligos ? 'var(--warn)' : 'var(--ok)') + '">' + hpOligos + ' oligos</b></div>';
+  h += '<div>SW GC range: <b>' + swMin + '–' + swMax + '%</b></div></div>';
+  h += '<div style="font-size:.72em;margin-top:6px"><span class="sok">✓Pass: ' + ps + '</span> · <span class="swn">⚠Warn: ' + ws + '</span> · <span class="sfl">✗Fail: ' + fs2 + '</span></div>';
+  h += '<div class="cbar"><div class="cbar-fill" style="width:' + (cc ? ps / cc * 100 : 0) + '%;background:var(--ok)"></div></div></div>';
+
+  h += '<div class="cbox"><h5>Sliding-Window GC% (20-nt window)</h5><div class="swg">';
+  if (!swGC.length) {
+    h += '<div style="font-size:.65em;color:#8B94B0">Sequence too short for 20-nt window.</div>';
+  } else {
+    for (var i = 0; i < swGC.length && i < 100; i++) {
+      var v = swGC[i];
+      var c = v > 60 ? 'var(--err)' : v < 40 ? 'var(--err)' : v > 55 || v < 45 ? 'var(--warn)' : 'var(--ok)';
+      h += '<div style="display:flex;align-items:center;gap:4px;margin:1px 0"><span style="font-size:.6em;color:#8B94B0;width:24px">' + i + '</span><div style="height:5px;border-radius:2px;background:' + c + ';width:' + Math.max(1, Math.round(v)) + 'px;min-width:1px"></div><span style="font-size:.6em;color:#8B94B0">' + v.toFixed(0) + '%</span></div>';
+    }
+    if (swGC.length > 100) h += '<div style="font-size:.65em;color:#8B94B0">... showing first 100 windows</div>';
+  }
+  h += '</div></div>';
+
+  h += '<div class="cbox"><h5>Recommendations</h5><ul style="font-size:.68em;margin-left:12px;margin-top:4px;line-height:1.5;color:#8B94B0">';
+  if (maxOHP > 5) h += '<li style="color:var(--err)">⛔ Homopolymer run ' + maxOHP + ' in oligos. Use Goldman-inspired.</li>';
+  else if (maxOHP > 3) h += '<li style="color:var(--warn)">⚠️ HP up to ' + maxOHP + '.</li>';
+  if (swGC.length && (parseFloat(swMax) > 65 || parseFloat(swMin) < 35)) h += '<li style="color:var(--err)">⛔ Sliding-window GC range ' + swMin + '–' + swMax + '%. Use XOR-Whitened.</li>';
+  if (hpOligos) h += '<li style="color:var(--warn)">⚠️ Hairpin heuristic triggered in ' + hpOligos + ' oligos.</li>';
+  if (fs2) h += '<li style="color:var(--err)">⛔ ' + fs2 + ' oligos &lt;40% heuristic feasibility.</li>';
+  if (maxOHP <= 3 && (!swGC.length || (parseFloat(swMax) <= 65 && parseFloat(swMin) >= 35)) && !fs2) h += '<li style="color:var(--ok)">✅ Per-oligo constraints look acceptable for this simplified simulation.</li>';
+  h += '</ul></div>';
+  $('qcC').innerHTML = h;
+}
+
+function uStats(d, os, sch, oc){
+  var ct = { A:0, T:0, C:0, G:0 };
+  for (var i = 0; i < d.length; i++) if (ct[d[i]] !== undefined) ct[d[i]]++;
+  var t = d.length;
+  var gc = t ? ((ct.G + ct.C) / t * 100).toFixed(1) : '0';
+  $('sT').textContent = fN(t);
+  $('sA').textContent = fN(ct.A);
+  $('sTh').textContent = fN(ct.T);
+  $('sC').textContent = fN(ct.C);
+  $('sG').textContent = fN(ct.G);
+  $('sGC').textContent = gc + '%';
+  $('sHP').textContent = maxHP(d);
+  $('sSch').textContent = schLabel(sch).split(' ')[0];
+  $('sBN').textContent = t ? (os * 8 / t).toFixed(2) : '0';
+  $('sOl').textContent = oc;
+  $('sOr').textContent = fS(os);
+  $('sCo').textContent = '$' + (t * 0.00007).toFixed(2);
+}
+
+/* ===== input modes ===== */
+
+window.setInputMode = function(mode){
+  S.inputMode = mode;
+  $('modeFile').className = mode === 'file' ? 'active' : '';
+  $('modeText').className = mode === 'text' ? 'active' : '';
+  $('filePanel').style.display = mode === 'file' ? 'block' : 'none';
+  $('textPanel').style.display = mode === 'text' ? 'block' : 'none';
+  if (mode === 'file') $('encBtn').disabled = !S.file;
+  else updateTextStats();
+};
+
+function updateTextStats(){
+  var t = $('ti').value;
+  var enc = new TextEncoder();
+  var bytes = enc.encode(t);
+  S.textBytes = bytes.length ? bytes : null;
+  $('tCh').textContent = fN(t.length);
+  $('tBy').textContent = fN(bytes.length);
+  $('tLn').textContent = fN(t.length ? t.split('\n').length : 0);
+  var sch = $('schSel').value;
+  var estNt = bytes.length ? ((16 + JSON.stringify({
+    filename:'manual_text.txt',
+    mimeType:'text/plain',
+    size:bytes.length,
+    checksum:'00000000',
+    byteLen:bytes.length,
+    scheme:sch,
+    seed:42,
+    version:'3.2',
+    encodedNtLen:0,
+    chunkCount:0,
+    lastChunkLen:0,
+    payloadLen:parseInt($('oLen').value,10)||100,
+    redundancy:parseInt($('oRed').value,10)||3,
+    barcodeLen:DEFAULT_BC_LEN
+  }).length + bytes.length) * (sch === 'goldman' ? 6 : 4)) : 0;
+  $('tNt').textContent = fN(estNt);
+  $('encBtn').disabled = !bytes.length;
+}
+
+/* ===== file upload ===== */
+
+var uz = $('uz'), fi = $('fi');
+uz.addEventListener('click', function(){ fi.click(); });
+uz.addEventListener('dragover', function(e){ e.preventDefault(); uz.classList.add('dg'); });
+uz.addEventListener('dragleave', function(e){ e.preventDefault(); uz.classList.remove('dg'); });
+uz.addEventListener('drop', function(e){
+  e.preventDefault();
+  uz.classList.remove('dg');
+  if (e.dataTransfer.files.length) loadF(e.dataTransfer.files[0]);
+});
+fi.addEventListener('change', function(e){ if (e.target.files.length) loadF(e.target.files[0]); });
+
+function loadF(f){
+  if (f.size > MAX_SZ) { toast('Too large!', 'err'); return; }
+  if (!f.size) { toast('Empty', 'err'); return; }
+  S.file = f;
+  $('finfo').style.display = 'block';
+  $('fn').textContent = f.name;
+  $('ft').textContent = f.type || 'unknown';
+  $('fs').textContent = fS(f.size);
+  var r = new FileReader();
+  r.onload = function(e){ $('fc').textContent = crc32(new Uint8Array(e.target.result)); };
+  r.readAsArrayBuffer(f);
+  $('encBtn').disabled = false;
+  toast('Loaded');
+}
+
+/* ===== text input ===== */
+
+$('ti').addEventListener('input', updateTextStats);
+$('schSel').addEventListener('change', updateTextStats);
+
+$('samBtn').addEventListener('click', function(){
+  $('ti').value = 'Hello, DNA Storage! This is a test of manual text encoding.\nIt supports words, numbers (42), punctuation (!?), and multiple lines.\nLine 2: The quick brown fox jumps over the lazy dog.\nLine 3: Special chars: @#$%^&*()[]{}|\\\\;:\'",.<>?/~`';
+  updateTextStats();
+});
+
+$('samU').addEventListener('click', function(){
+  $('ti').value = 'Unicode test:\nCafe naive resume: café naïve résumé\nJapanese: 日本語\nKorean: 한글\nGreek: Ελληνικά\nEmoji: 🧬🌍🚀☀️🌙⭐\nMath: αβγδε ∑∏∫≈≠∞';
+  updateTextStats();
+});
+
+$('clrTxt').addEventListener('click', function(){ $('ti').value = ''; updateTextStats(); });
+
+/* ===== encode ===== */
+
+$('encBtn').addEventListener('click', function(){
+  var b = $('encBtn');
+  b.disabled = true;
+  b.innerHTML = '<span class="sp"></span>';
+  setTimeout(function(){
+    try {
+      if (S.inputMode === 'file') {
+        if (!S.file) throw new Error('No file selected');
+        var r = new FileReader();
+        r.onerror = function(){ toast('Read error', 'err'); b.disabled = false; b.innerHTML = '<span>⚡</span> ENCODE'; };
+        r.onload = function(e){
+          try {
+            doEnc(new Uint8Array(e.target.result), S.file.name, S.file.type);
+            document.querySelector('[data-t="dna"]').click();
+          } catch (err) {
+            toast(err.message, 'err');
+            console.error(err);
+          }
+          b.disabled = false;
+          b.innerHTML = '<span>⚡</span> ENCODE';
+        };
+        r.readAsArrayBuffer(S.file);
+      } else {
+        if (!S.textBytes || !S.textBytes.length) throw new Error('Enter some text first');
+        doEnc(S.textBytes, 'manual_text.txt', 'text/plain');
+        document.querySelector('[data-t="dna"]').click();
+        b.disabled = false;
+        b.innerHTML = '<span>⚡</span> ENCODE';
+      }
+    } catch (err) {
+      toast(err.message, 'err');
+      b.disabled = false;
+      b.innerHTML = '<span>⚡</span> ENCODE';
+    }
+  }, 20);
+});
+
+$('testBtn').addEventListener('click', function(){
+  try {
+    var bytes = new TextEncoder().encode('hello');
+    doEnc(bytes, 'hello.txt', 'text/plain');
+    $('di').value = S.dna;
+    document.querySelector('[data-t="dna"]').click();
+    var r = doDec(S.dna);
+    var decoded = new TextDecoder().decode(r.fileBytes);
+    toast(decoded === 'hello' && r.ok ? '✅ Round-trip OK' : '❌ Fail', decoded === 'hello' && r.ok ? '' : 'err');
+  } catch (e) {
+    toast('❌ ' + e.message, 'err');
+  }
+});
+
+/* ===== decode ===== */
+
+$('decBtn').addEventListener('click', function(){
+  var raw = $('di').value.trim();
+  if (!raw) { toast('Paste DNA', 'err'); return; }
+  var b = $('decBtn');
+  b.disabled = true;
+  b.innerHTML = '<span class="sp"></span>';
+  try {
+    var modeEl = document.querySelector('input[name="mode"]:checked');
+    var mode = modeEl ? modeEl.value : 'encoded';
+    var r;
+    if (mode === 'pool') r = doPoolDec(raw);
+    else {
+      var dna = cleanIn(raw);
+      if (!dna.length) throw new Error('No nucleotides');
+      r = doDec(dna);
+    }
+    $('decRes').style.display = 'block';
+    $('decT').textContent = '✅ Decoded' + (r.isRaw ? ' (Raw)' : '');
+    $('dN').textContent = r.meta.filename;
+    $('dTp').textContent = r.meta.mimeType;
+    $('dSz').textContent = fS(r.meta.size);
+    var m = $('dM');
+    if (r.isRaw) { m.textContent = 'ℹ️ CRC: ' + r.computed; m.className = ''; m.style.color = '#FFC947'; }
+    else if (r.ok) { m.textContent = '✅ CRC VERIFIED'; m.className = 'mok'; m.style.color = ''; }
+    else { m.textContent = '❌ MISMATCH (' + r.computed + ')'; m.className = 'mfl'; m.style.color = ''; }
+    $('dlDec').style.display = 'flex';
+    toast('✅ Ready');
+  } catch (err) {
+    toast(err.message, 'err');
+    console.error(err);
+  }
+  b.disabled = false;
+  b.innerHTML = '<span>🔓</span> DECODE';
+});
+
+$('revBtn').addEventListener('click', function(){
+  var raw = $('di').value.trim();
+  if (!raw) { toast('Paste DNA', 'err'); return; }
+  var modeEl = document.querySelector('input[name="mode"]:checked');
+  var mode = modeEl ? modeEl.value : 'encoded';
+  if (mode === 'pool' || ((document.querySelector('input[name="fmt"]:checked') || {}).value === 'fasta')) {
+    toast('⚠️ Reverse complement converts input to plain sequence orientation text', 'warn');
+  }
+  var rc = revComp(cleanIn(raw));
+  $('di').value = rc;
+  toast('🔄 Reverse complement pasted');
+});
+
+$('dlDec').addEventListener('click', function(){ if (S.decBlob) dlB(S.decBlob, S.decName); });
+
+var modeRadios = document.querySelectorAll('input[name="mode"]');
+for (var ri = 0; ri < modeRadios.length; ri++) {
+  modeRadios[ri].addEventListener('change', function(){
+    var vEl = document.querySelector('input[name="mode"]:checked');
+    var v = vEl ? vEl.value : 'encoded';
+    $('minfo').style.display = v !== 'encoded' ? 'block' : 'none';
+    if (v === 'raw') $('minfoT').textContent = '⚠️ Raw: treats DNA as a simple 2-bit quaternary alphabet. This bypasses the encoded container format.';
+    else if (v === 'pool') $('minfoT').textContent = '⚠️ Pool: reads oligos from FASTA/plain text, groups them by barcode, builds a simple consensus, then attempts verified decode.';
+  });
+}
+
+$('impBtn').addEventListener('click', function(){ $('impFi').click(); });
+$('impFi').addEventListener('change', function(e){
+  if (!e.target.files.length) return;
+  var r = new FileReader();
+  r.onload = function(ev){
+    try {
+      var o = JSON.parse(ev.target.result);
+      var seqField = o.sequence || o.seq;
+      if (!seqField) throw new Error('No sequence field');
+      var seq = String(seqField).toUpperCase().replace(/[^ATCG]/g, '');
+      if (seq.length < 10) throw new Error('Sequence too short');
+      $('di').value = seq;
+      toast('✅ Imported');
+    } catch (er) {
+      toast(er.message, 'err');
+    }
+  };
+  r.readAsText(e.target.files[0]);
+});
+
+/* ===== mutation ===== */
+
+['subR','delR','insR','drpR'].forEach(function(id){
+  $(id).addEventListener('input', function(e){
+    $(id.replace('R','V')).textContent = e.target.value + '%';
+  });
+});
+
+$('mutBtn').addEventListener('click', function(){
+  if (!S.oligos.length) { toast('Encode first', 'err'); return; }
+  S.mutPool = mutatePool(
+    S.oligos,
+    parseFloat($('subR').value),
+    parseFloat($('delR').value),
+    parseFloat($('insR').value),
+    parseFloat($('drpR').value)
+  );
+  var dr = S.oligos.length - S.mutPool.length;
+  $('mutR').innerHTML = '<div class="cbox"><h5>Mutation</h5><div style="font-size:.7em;margin-top:3px">' +
+    S.oligos.length + '→' + S.mutPool.length + ' (' + dr + ' dropped)</div></div>';
+  $('mutR').style.display = 'block';
+  $('recBtn').disabled = false;
+  $('rdGraph').style.display = 'none';
+  toast('☣️ Done');
+});
+
+$('recBtn').addEventListener('click', function(){
+  if (!S.mutPool) { toast('Simulate first', 'err'); return; }
+  var payloadLen = parseInt($('oLen').value, 10) || 100;
+  var res = recoverPool(S.mutPool, S.chunkCt, payloadLen, S.payloadLens, S.meta.barcodeLen || DEFAULT_BC_LEN);
+  S.lastRecoveredDNA = res.recoveredDna;
+
+  var ok = false;
+  try {
+    var reconstructed = res.recoveredDna;
+    if (S.meta.encodedNtLen && reconstructed.length > S.meta.encodedNtLen) reconstructed = reconstructed.substring(0, S.meta.encodedNtLen);
+    if (!(S.meta.scheme === 'goldman' && res.bad > 0)) {
+      var parsed = decodeEncodedWithVerification(reconstructed, S.meta.scheme || null);
+      ok = !!parsed.ok;
+    }
+  } catch (e) {
+    ok = false;
+  }
+
+  var h = $('mutR').innerHTML;
+  h += '<div class="cbox"><h5>Recovery</h5><div style="font-size:.7em;margin-top:3px">' +
+    res.good + '/' + res.total + ' chunks recovered · <b class="' + (ok ? 'sok' : 'sfl') + '">' +
+    (ok ? '✅ CRC VERIFIED' : '❌ FAILED') + '</b></div>';
+  h += '<div style="font-size:.62em;color:#8B94B0;margin-top:3px">⚠️ Only same-length reads are used for consensus. Reads with indel-caused frameshifts are discarded in this simplified model.</div></div>';
+  $('mutR').innerHTML = h;
+
+  if (res.depths && res.depths.length) {
+    $('rdGraph').style.display = 'block';
+    var bar = $('rdBar');
+    bar.innerHTML = '';
+    var maxD = Math.max.apply(null, res.depths.concat([1]));
+    for (var i = 0; i < res.depths.length && i < 60; i++) {
+      var d = document.createElement('div');
+      d.className = 'dcol';
+      d.style.height = (res.depths[i] / maxD * 36 + 2) + 'px';
+      d.title = '#' + i + ': ' + res.depths[i] + ' reads';
+      bar.appendChild(d);
+    }
+  }
+  toast(ok ? '✅ Recovered!' : '❌ Failed — try lower rates or higher redundancy', ok ? '' : 'warn');
+});
+
+/* ===== copy/download ===== */
+
+$('cpD').addEventListener('click', function(){ if (!S.dna) return toast('No DNA', 'err'); copyText(S.dna, '✅ Copied'); });
+$('cpB').addEventListener('click', function(){ if (!S.fbin) return toast('No data', 'err'); copyText(S.fbin, '✅ Copied'); });
+$('cpC').addEventListener('click', function(){ if (!S.dna) return toast('No DNA', 'err'); copyText(revComp(S.dna), '✅ Rev comp'); });
+
+$('dlF').addEventListener('click', function(){
+  if (!S.dna) return toast('No DNA', 'err');
+  var n = sN(S.meta.filename || 'enc');
+  var lines = S.dna.match(/.{1,80}/g);
+  var fasta = '>DNAenc_' + n +
+    '|scheme:' + S.scheme +
+    '|crc32:' + S.meta.checksum +
+    '|chunkCount:' + S.chunkCt +
+    '|payloadLen:' + (S.meta.payloadLen || (parseInt($('oLen').value, 10) || 100)) +
+    '|lastChunkLen:' + (S.meta.lastChunkLen || 0) +
+    '|encodedNtLen:' + S.dna.length +
+    '|barcodeLen:' + (S.meta.barcodeLen || DEFAULT_BC_LEN) +
+    '\n' + (lines ? lines.join('\n') : S.dna) + '\n';
+  dlB(new Blob([fasta], { type:'text/plain' }), n + '.fasta');
+  toast('✅');
+});
+
+$('dlSt').addEventListener('click', function(){
+  if (!S.dna) return toast('No DNA', 'err');
+  var obj = {
+    format:'DNA Storage Simulator',
+    version:'3.2',
+    metadata:S.meta,
+    scheme:S.scheme,
+    sequence:S.dna,
+    oligoCount:S.chunkCt,
+    redundancy:parseInt($('oRed').value, 10) || 3,
+    created:new Date().toISOString()
+  };
+  dlB(new Blob([JSON.stringify(obj, null, 2)], { type:'application/json' }), sN(S.meta.filename || 'enc') + '.dnastore.json');
+  toast('✅');
+});
+
+$('dlO').addEventListener('click', function(){
+  if (!S.oligos.length) return toast('No oligos', 'err');
+  var seen = {};
+  var f = '';
+  var payloadLen = S.meta.payloadLen || (parseInt($('oLen').value, 10) || 100);
+  var lastChunkLen = S.meta.lastChunkLen || 0;
+  var bcLen = S.meta.barcodeLen || DEFAULT_BC_LEN;
+  for (var oi = 0; oi < S.oligos.length; oi++) {
+    var o = S.oligos[oi];
+    if (seen[o.idx]) continue;
+    seen[o.idx] = true;
+    var lines = o.fullSeq.match(/.{1,80}/g);
+    f += '>oligo_' + o.idx +
+      '|idx:' + o.idx +
+      '|barcode:' + o.barcode +
+      '|len:' + o.fullSeq.length +
+      '|gc:' + gcPct(o.fullSeq).toFixed(0) + '%' +
+      '|chunkCount:' + S.chunkCt +
+      '|payloadLen:' + payloadLen +
+      '|lastChunkLen:' + lastChunkLen +
+      '|encodedNtLen:' + S.dna.length +
+      '|scheme:' + S.scheme +
+      '|barcodeLen:' + bcLen +
+      '\n' + (lines ? lines.join('\n') : o.fullSeq) + '\n';
+  }
+  dlB(new Blob([f], { type:'text/plain' }), 'pool.fasta');
+  toast('✅');
+});
+
+/* ===== clear ===== */
+
+$('clrEnc').addEventListener('click', function(){
+  var mode = S.inputMode;
+  var threeReady = S.threeReady;
+  S = { file:null, dna:'', fbin:'', meta:{}, scheme:'balanced', oligos:[], decBlob:null, decName:'', chunkCt:0, mutPool:null, payloadLens:null, encodedNtLen:0, inputMode:mode, textBytes:null, rawCombined:null, lastRecoveredDNA:'', threeReady:threeReady };
+  fi.value = '';
+  $('ti').value = '';
+  updateTextStats();
+  $('finfo').style.display = 'none';
+  $('encBtn').disabled = true;
+  $('dnaBox').innerHTML = '<span class="ph">No data.</span>';
+  $('dnaI').style.display = 'none';
+  $('binBox').innerHTML = '<span class="ph">Encode a file.</span>';
+  $('binI').style.display = 'none';
+  $('oRows').innerHTML = '';
+  $('oligoI').style.display = 'none';
+  $('qcC').innerHTML = '<span class="ph">Encode first.</span>';
+  $('legBox').innerHTML = '';
+  ['sT','sA','sTh','sC','sG'].forEach(function(id){ $(id).textContent = '0'; });
+  $('sGC').textContent = '0%';
+  $('sHP').textContent = '0';
+  $('sSch').textContent = '-';
+  $('sBN').textContent = '0';
+  $('sOl').textContent = '0';
+  $('sOr').textContent = '0 B';
+  $('sCo').textContent = '$0';
+  $('mutBtn').disabled = true;
+  $('recBtn').disabled = true;
+  $('mutR').style.display = 'none';
+  $('rdGraph').style.display = 'none';
+  upd3D();
+  toast('Cleared');
+});
+
+$('clrDec').addEventListener('click', function(){
+  $('di').value = '';
+  $('decRes').style.display = 'none';
+  $('dlDec').style.display = 'none';
+  S.decBlob = null;
+  toast('Cleared');
+});
+
+/* ===== tabs ===== */
+
+var tabEls = document.querySelectorAll('.tab');
+for (var ti = 0; ti < tabEls.length; ti++) {
+  tabEls[ti].addEventListener('click', function(){
+    var allTabs = document.querySelectorAll('.tab');
+    var allBodies = document.querySelectorAll('.tb');
+    for (var a = 0; a < allTabs.length; a++) allTabs[a].classList.remove('active');
+    for (var b = 0; b < allBodies.length; b++) allBodies[b].classList.remove('active');
+    this.classList.add('active');
+    $(this.dataset.t + 'Body').classList.add('active');
+    if (this.dataset.t === 'v3d') init3D();
+    if (this.dataset.t !== 'v3d' && animId) { cancelAnimationFrame(animId); animId = null; }
+  });
+}
+
+/* ===== 3D helix ===== */
+
+var scene, cam, ren, dGrp, lGrp, hGrp, animId = null, v3ok = false;
+var orb = { th:0.3, ph:1.1, d:35, px:0, py:0, dr:false, btn:0, mx:0, my:0, ar:true };
+var RISE = 0.5, TWI = Math.PI / 5, RAD = 2;
+var NC = { A:0x00D9FF, T:0xFF6B9D, C:0xC9F0FF, G:0xFFC947 };
+var NH = { A:'#00D9FF', T:'#FF6B9D', C:'#C9F0FF', G:'#FFC947' };
+var NNM = { A:'Adenine', T:'Thymine', C:'Cytosine', G:'Guanine' };
+var bbSG, nucSG, uCyl, bbMt, hbMt, nucMt, lblCache = {};
+
+function initMats(){
+  bbSG = new THREE.SphereGeometry(0.13, 7, 5);
+  nucSG = new THREE.SphereGeometry(0.24, 9, 7);
+  uCyl = new THREE.CylinderGeometry(1, 1, 1, 5);
+  bbMt = new THREE.MeshPhongMaterial({ color:0x8899AA, shininess:40 });
+  hbMt = new THREE.MeshPhongMaterial({ color:0xffffff, transparent:true, opacity:0.14 });
+  nucMt = {};
+  for (var k in NC) nucMt[k] = new THREE.MeshPhongMaterial({ color:NC[k], emissive:NC[k], emissiveIntensity:0.25, shininess:60 });
+  ['A','T','C','G'].forEach(function(nt){
+    var c = document.createElement('canvas');
+    c.width = 64; c.height = 64;
+    var ctx = c.getContext('2d');
+    ctx.clearRect(0,0,64,64);
+    ctx.font = 'bold 40px monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = '#000';
+    ctx.fillText(nt, 33, 33);
+    ctx.fillStyle = NH[nt];
+    ctx.fillText(nt, 32, 32);
+    lblCache[nt] = new THREE.CanvasTexture(c);
+  });
+}
+
+function init3D(){
+  if (v3ok) { if (!animId) anim(); upd3D(); return; }
+  if (typeof THREE === 'undefined') { $('vHt').textContent = 'Three.js not loaded.'; return; }
+  var w = $('vW'), cv = $('cv3d'), ww = w.clientWidth, hh = w.clientHeight;
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x050818);
+  scene.fog = new THREE.FogExp2(0x050818, 0.0025);
+  cam = new THREE.PerspectiveCamera(50, ww / hh, 0.1, 600);
+  ren = new THREE.WebGLRenderer({ canvas:cv, antialias:true });
+  ren.setSize(ww, hh);
+  ren.setPixelRatio(Math.min(devicePixelRatio, 2));
+  scene.add(new THREE.AmbientLight(0x334466, 0.5));
+  var dl2 = new THREE.DirectionalLight(0xffffff, 0.7);
+  dl2.position.set(10, 30, 20);
+  scene.add(dl2);
+  scene.add(new THREE.HemisphereLight(0x88AADD, 0x332244, 0.3));
+  dGrp = new THREE.Group(); lGrp = new THREE.Group(); hGrp = new THREE.Group();
+  scene.add(dGrp); scene.add(lGrp); scene.add(hGrp);
+  initMats();
+  setupOrb(cv);
+
+  var raycaster = new THREE.Raycaster(), mouse = new THREE.Vector2();
+  cv.addEventListener('mousemove', function(e){
+    var r = cv.getBoundingClientRect();
+    mouse.x = ((e.clientX - r.left) / r.width) * 2 - 1;
+    mouse.y = -((e.clientY - r.top) / r.height) * 2 + 1;
+    raycaster.setFromCamera(mouse, cam);
+    var hits = raycaster.intersectObjects(dGrp.children, false);
+    var inf = $('vInf');
+    if (hits.length && hits[0].object.userData.nuc) {
+      var d = hits[0].object.userData;
+      $('vNN').innerHTML = '<span style="color:' + NH[d.nuc] + '">' + d.nuc + '</span> ' + NNM[d.nuc];
+      $('vND').textContent = 'Pos ' + d.idx + ' · ' + d.nuc + '-' + CMP[d.nuc] + ' · ' + (d.nuc === 'A' || d.nuc === 'T' ? 2 : 3) + 'H';
+      inf.classList.add('show');
+    } else {
+      inf.classList.remove('show');
+    }
+  });
+
+  $('vSt').addEventListener('input', rb);
+  $('vCn').addEventListener('input', function(e){ $('vCnV').textContent = e.target.value; rb(); });
+  $('vZm').addEventListener('input', function(e){ orb.d = +e.target.value; });
+  $('vAR').addEventListener('change', function(e){ orb.ar = e.target.checked; });
+  $('vLb').addEventListener('change', rb);
+  $('vHB').addEventListener('change', rb);
+  $('vRs').addEventListener('click', function(){
+    orb = { th:0.3, ph:1.1, d:35, px:0, py:0, dr:false, btn:0, mx:0, my:0, ar:true };
+    $('vZm').value = 35;
+  });
+
+  window.addEventListener('resize', function(){
+    if (!$('v3dBody').classList.contains('active')) return;
+    var w2 = w.clientWidth, h2 = w.clientHeight;
+    if (w2 < 1 || h2 < 1) return;
+    cam.aspect = w2 / h2;
+    cam.updateProjectionMatrix();
+    ren.setSize(w2, h2);
+  });
+
+  v3ok = true;
+  S.threeReady = true;
+  anim();
+  upd3D();
+}
+
+function setupOrb(el){
+  el.addEventListener('pointerdown', function(e){
+    orb.dr = true; orb.btn = e.button; orb.mx = e.clientX; orb.my = e.clientY;
+    el.setPointerCapture(e.pointerId);
+  });
+  el.addEventListener('pointermove', function(e){
+    if (!orb.dr) return;
+    var dx = e.clientX - orb.mx, dy = e.clientY - orb.my;
+    orb.mx = e.clientX; orb.my = e.clientY;
+    if (orb.btn === 0) {
+      orb.th -= dx * 0.008;
+      orb.ph = Math.max(0.15, Math.min(Math.PI - 0.15, orb.ph - dy * 0.008));
+    } else if (orb.btn === 2) {
+      orb.px -= dx * 0.04;
+      orb.py += dy * 0.04;
+    }
+  });
+  el.addEventListener('pointerup', function(e){ orb.dr = false; try { el.releasePointerCapture(e.pointerId); } catch (x) {} });
+  el.addEventListener('wheel', function(e){
+    e.preventDefault();
+    orb.d = Math.max(3, Math.min(120, orb.d * (1 + e.deltaY * 0.001)));
+    $('vZm').value = Math.round(orb.d);
+  }, { passive:false });
+  el.addEventListener('contextmenu', function(e){ e.preventDefault(); });
+  var tch = [], pn = 0;
+  el.addEventListener('touchstart', function(e){
+    tch = [];
+    for (var ti = 0; ti < e.touches.length; ti++) tch.push(e.touches[ti]);
+    if (tch.length === 2) {
+      var dx = tch[1].clientX - tch[0].clientX, dy = tch[1].clientY - tch[0].clientY;
+      pn = Math.sqrt(dx * dx + dy * dy);
+    } else {
+      orb.mx = tch[0].clientX; orb.my = tch[0].clientY;
+    }
+  });
+  el.addEventListener('touchmove', function(e){
+    e.preventDefault();
+    if (e.touches.length === 1) {
+      var dx = e.touches[0].clientX - orb.mx, dy = e.touches[0].clientY - orb.my;
+      orb.th -= dx * 0.008;
+      orb.ph = Math.max(0.15, Math.min(Math.PI - 0.15, orb.ph - dy * 0.008));
+      orb.mx = e.touches[0].clientX; orb.my = e.touches[0].clientY;
+    } else if (e.touches.length === 2) {
+      var dx2 = e.touches[1].clientX - e.touches[0].clientX;
+      var dy2 = e.touches[1].clientY - e.touches[0].clientY;
+      var dist = Math.sqrt(dx2 * dx2 + dy2 * dy2);
+      orb.d = Math.max(3, Math.min(120, orb.d * (pn / dist)));
+      pn = dist;
+    }
+  }, { passive:false });
+}
+
+function anim(){
+  animId = requestAnimationFrame(anim);
+  if (orb.ar) orb.th += 0.004;
+  var sp = Math.sin(orb.ph), cp = Math.cos(orb.ph);
+  var st = Math.sin(orb.th), ct = Math.cos(orb.th);
+  cam.position.set(orb.d * sp * ct + orb.px, orb.d * cp + orb.py, orb.d * sp * st);
+  cam.lookAt(orb.px, orb.py, 0);
+  for (var li = 0; li < lGrp.children.length; li++) lGrp.children[li].quaternion.copy(cam.quaternion);
+  ren.render(scene, cam);
+}
+
+function upd3D(){
+  if (!v3ok) return;
+  var sl = $('vSt');
+  if (S.dna.length) {
+    sl.max = Math.max(0, S.dna.length - 10);
+    sl.value = Math.min(+sl.value, +sl.max);
+    $('vHt').style.display = 'none';
+  } else {
+    sl.max = 0; sl.value = 0;
+    $('vHt').style.display = 'block';
+    clrG(dGrp); clrG(lGrp); clrG(hGrp);
+    $('bpC').textContent = '0';
+    return;
+  }
+  rb();
+}
+
+function clrG(g){
+  while (g.children.length) {
+    var c = g.children[0];
+    g.remove(c);
+    if (c.geometry && c.geometry.dispose && c.geometry !== bbSG && c.geometry !== nucSG && c.geometry !== uCyl) c.geometry.dispose();
+    if (c.material && c.material.dispose && c.material !== bbMt && c.material !== hbMt) c.material.dispose();
+  }
+}
+
+function rb(){
+  if (!v3ok || !S.dna.length) return;
+  clrG(dGrp); clrG(lGrp); clrG(hGrp);
+  var start = parseInt($('vSt').value, 10) || 0;
+  var count = parseInt($('vCn').value, 10) || 80;
+  var sLb = $('vLb').checked, sHB = $('vHB').checked;
+  var end = Math.min(start + count, S.dna.length);
+  var n = end - start;
+  if (n < 2) return;
+  $('vStV').textContent = fN(start) + '–' + fN(end - 1);
+  $('bpC').textContent = fN(n) + '/' + fN(S.dna.length);
+
+  var p1 = [], p2 = [];
+  for (var i = 0; i < n; i++) {
+    var gi = start + i;
+    p1.push(new THREE.Vector3(RAD * Math.cos(gi * TWI), i * RISE, RAD * Math.sin(gi * TWI)));
+    p2.push(new THREE.Vector3(RAD * Math.cos(gi * TWI + Math.PI), i * RISE, RAD * Math.sin(gi * TWI + Math.PI)));
+  }
+
+  if (p1.length >= 2) {
+    dGrp.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(p1), n * 3, 0.09, 5, false), bbMt));
+    dGrp.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(p2), n * 3, 0.09, 5, false), bbMt));
+  }
+
+  for (var ii = 0; ii < n; ii++) {
+    var gi2 = start + ii;
+    var nuc = S.dna[gi2], comp = CMP[nuc];
+    var s1 = p1[ii], s2 = p2[ii];
+    var mid = new THREE.Vector3().addVectors(s1, s2).multiplyScalar(0.5);
+    var n1 = new THREE.Vector3().lerpVectors(s1, mid, 0.55);
+    var n2 = new THREE.Vector3().lerpVectors(s2, mid, 0.55);
+
+    var bb1 = new THREE.Mesh(bbSG, bbMt); bb1.position.copy(s1); dGrp.add(bb1);
+    var bb2 = new THREE.Mesh(bbSG, bbMt); bb2.position.copy(s2); dGrp.add(bb2);
+
+    var ns1 = new THREE.Mesh(nucSG, nucMt[nuc]); ns1.position.copy(n1); ns1.userData = { nuc:nuc, idx:gi2, s:1 }; dGrp.add(ns1);
+    var ns2 = new THREE.Mesh(nucSG, nucMt[comp]); ns2.position.copy(n2); ns2.userData = { nuc:comp, idx:gi2, s:2 }; dGrp.add(ns2);
+
+    addCyl(s1, n1, 0.05, nucMt[nuc]);
+    addCyl(s2, n2, 0.05, nucMt[comp]);
+
+    if (sHB) {
+      var nb = (nuc === 'A' || nuc === 'T') ? 2 : 3;
+      var dir = new THREE.Vector3().subVectors(n2, n1);
+      var pp = new THREE.Vector3().crossVectors(dir, new THREE.Vector3(0,1,0));
+      if (pp.lengthSq() < 1e-8) pp.set(1,0,0);
+      pp.normalize();
+      for (var bb = 0; bb < nb; bb++) {
+        var off = (bb - (nb - 1) / 2) * 0.08;
+        addCylH(n1.clone().addScaledVector(pp, off), n2.clone().addScaledVector(pp, off), 0.012);
+      }
+    }
+
+    if (sLb && (n <= 40 || ii % Math.max(1, Math.floor(n / 40)) === 0)) {
+      lGrp.add(mkLbl(nuc, n1.clone().add(new THREE.Vector3().subVectors(n1, mid).normalize().multiplyScalar(0.25)), 0.07));
+      lGrp.add(mkLbl(comp, n2.clone().add(new THREE.Vector3().subVectors(n2, mid).normalize().multiplyScalar(0.25)), 0.07));
+    }
+  }
+
+  var th = n * RISE;
+  dGrp.position.y = -th / 2;
+  lGrp.position.y = -th / 2;
+  hGrp.position.y = -th / 2;
+}
+
+function addCyl(a, b, r, mt){
+  var d = new THREE.Vector3().subVectors(b, a);
+  var l = d.length();
+  if (l < 0.001) return;
+  var m = new THREE.Mesh(uCyl, mt);
+  m.position.lerpVectors(a, b, 0.5);
+  m.scale.set(r, l, r);
+  m.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), d.normalize());
+  dGrp.add(m);
+}
+
+function addCylH(a, b, r){
+  var d = new THREE.Vector3().subVectors(b, a);
+  var l = d.length();
+  if (l < 0.001) return;
+  var m = new THREE.Mesh(uCyl, hbMt);
+  m.position.lerpVectors(a, b, 0.5);
+  m.scale.set(r, l, r);
+  m.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), d.normalize());
+  hGrp.add(m);
+}
+
+function mkLbl(txt, pos, yo){
+  var t = lblCache[txt] || lblCache['A'];
+  var mt = new THREE.SpriteMaterial({ map:t, transparent:true, depthTest:false });
+  var s = new THREE.Sprite(mt);
+  s.scale.set(0.38, 0.38, 1);
+  s.position.copy(pos);
+  s.position.y += yo;
+  return s;
+}
+
+/* ===== tooltips ===== */
+
+var TOOLTIP_TEXT = {
+  modeFile:"Use a local file as the source data to encode into DNA.",
+  modeText:"Type or paste text and encode its UTF-8 bytes into DNA.",
+  uz:"Upload a file or drag it here. The simulator reads the file bytes directly.",
+  fi:"Choose a file to encode into DNA.",
+  schSel:"Select the encoding scheme used to convert binary data into DNA symbols.",
+  oLen:"Number of DNA bases stored in each oligo payload before barcode and parity are added.",
+  oRed:"Number of copies generated for each oligo in the simulated pool.",
+  encBtn:"Encode the current file or typed text into a DNA sequence and oligo pool.",
+  testBtn:"Run a small built-in round-trip test using the word hello.",
+  clrEnc:"Clear the current encoded data, oligos, QC results, and statistics.",
+  ti:"Type or paste text here. It is converted to UTF-8 bytes before encoding.",
+  samBtn:"Insert a sample text example.",
+  samU:"Insert a Unicode example to test multi-language UTF-8 encoding.",
+  clrTxt:"Clear the manual text input.",
+  di:"Paste DNA, FASTA, or oligo pool text here for decoding.",
+  decBtn:"Decode the current DNA input back into file bytes if integrity checks pass.",
+  revBtn:"Replace the input with its reverse complement, which can help if orientation is reversed.",
+  impBtn:"Import a simulator JSON container and copy its stored DNA sequence into the decode box.",
+  clrDec:"Clear the decode input and result area.",
+  dlDec:"Download the decoded output file.",
+  cpD:"Copy the encoded DNA sequence.",
+  cpC:"Copy the reverse complement of the encoded DNA.",
+  dlF:"Download the encoded DNA as FASTA text.",
+  dlSt:"Download the simulator container with DNA and metadata.",
+  cpB:"Copy the original binary bitstream.",
+  dlO:"Export one representative copy of each oligo as FASTA.",
+  mutBtn:"Apply simulated substitution, insertion, deletion, and dropout errors to the oligo pool.",
+  recBtn:"Recover a consensus from same-length reads and try verified decoding.",
+  subR:"Approximate substitution error rate in percent.",
+  delR:"Approximate deletion error rate in percent.",
+  insR:"Approximate insertion error rate in percent.",
+  drpR:"Approximate oligo dropout rate in percent.",
+  vSt:"Scroll through the sequence shown in the helix view.",
+  vCn:"Choose how many base pairs are visible in the helix window.",
+  vZm:"Adjust camera distance for the helix view.",
+  vAR:"Turn automatic rotation on or off.",
+  vLb:"Show or hide nucleotide labels in the helix view.",
+  vHB:"Show or hide stylized hydrogen bonds.",
+  vRs:"Reset helix camera and motion settings.",
+  dnaBox:"The full encoded DNA sequence.",
+  binBox:"The original source data shown as binary bits.",
+  qcC:"Simplified quality-control metrics for the current encoded DNA and oligos.",
+  legBox:"Shows how the current display should be interpreted for the selected scheme."
+};
+
+(function setupTooltips(){
+  var tip = $('ttip');
+  var targets = [
+    'modeFile','modeText','uz','fi','schSel','oLen','oRed','encBtn','testBtn','clrEnc','ti','samBtn','samU','clrTxt',
+    'di','decBtn','revBtn','impBtn','clrDec','dlDec','cpD','cpC','dlF','dlSt','cpB','dlO','mutBtn','recBtn',
+    'subR','delR','insR','drpR','vSt','vCn','vZm','vAR','vLb','vHB','vRs','dnaBox','binBox','qcC','legBox'
+  ];
+  function show(el, txt){
+    tip.textContent = txt;
+    tip.style.display = 'block';
+    var r = el.getBoundingClientRect();
+    var tw = tip.offsetWidth;
+    var th = tip.offsetHeight;
+    var left = r.left + (r.width / 2) - (tw / 2);
+    if (left < 8) left = 8;
+    if (left + tw > window.innerWidth - 8) left = window.innerWidth - tw - 8;
+    var top = r.top - th - 8;
+    if (top < 8) top = r.bottom + 8;
+    tip.style.left = left + 'px';
+    tip.style.top = top + 'px';
+  }
+  function hide(){ tip.style.display = 'none'; }
+  for (var i = 0; i < targets.length; i++) {
+    var el = $(targets[i]);
+    if (!el) continue;
+    var txt = TOOLTIP_TEXT[targets[i]];
+    if (!txt) continue;
+    el.setAttribute('data-tip', txt);
+    el.addEventListener('mouseenter', function(){ show(this, this.getAttribute('data-tip')); });
+    el.addEventListener('mouseleave', hide);
+    el.addEventListener('focus', function(){ show(this, this.getAttribute('data-tip')); });
+    el.addEventListener('blur', hide);
+  }
+  document.addEventListener('scroll', hide, true);
+  window.addEventListener('resize', hide);
+})();
+
+/* ===== init ===== */
+
+setInputMode('file');
+updateTextStats();
+updateLegend('balanced');
+
+})();
+</script>
+</body>
+</html>
